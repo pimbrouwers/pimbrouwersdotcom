@@ -1,0 +1,24 @@
+{{> header}}
+
+{{> navigation}}
+
+<div class="container">
+
+    {{#post}}
+    <div class="row">
+        <div class="col-sm-8 blog-main">
+            <h1 class="blog-title">{{title}}</h1>
+            {{{body}}}
+        </div>
+  
+    </div>
+    
+    <h1>{{site.testVar}}</h1>
+    
+    {{/post}}
+
+</div>
+
+<h1>{{site.testVar}}</h1>
+
+{{> footer}}

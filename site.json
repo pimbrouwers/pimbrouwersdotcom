@@ -1,0 +1,18 @@
+{
+  "title": "Pim Brouwers",
+  "description": "The musings of a curious developer, fitness enthusiast and chair raver.",
+  "url": "www.pimbrouwers.com",
+  "rss": "/rss.xml",
+  "maxItems": 3,
+  "concatJs": [
+    "./src/js/*.js"
+  ],
+  "styleSheet": "style.css",
+  "authors": {
+    "Pim Brouwers": {
+      "name": "Pim Brouwers",
+      "bio": "You're never wrong to do the right thing."
+    }
+  },
+  "imageCompression": true
+}
