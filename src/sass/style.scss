@@ -26,7 +26,7 @@ h3 {
 #layout {
     padding: 0;
 }
-
+ 
 .header {
     text-align: center;
     top: auto;
@@ -42,14 +42,18 @@ h3 {
 .brand-tagline {
     margin: 0;
 }
-.brand-title {     
+.brand-title {    
+line-height: 1; 
+    font-size: 2.25em;
     font-weight: 100;
     letter-spacing: 1px;
     text-transform: uppercase;
+    margin-bottom: .125em;
 }
 .brand-tagline {
     margin-bottom: .5rem;
     font-weight: 300;
+    font-size: 1.3125em;
     color: rgb(176, 202, 219);
 }
 
@@ -97,7 +101,7 @@ h3 {
     padding-bottom: 2em;
 }
 .post-title {
-    font-size: 2em;
+    font-size: 1.5em;
     color: #222;
     margin-bottom: 0.2em;
 }
@@ -154,8 +158,12 @@ h3 {
         margin-left: 33.33%;
     }
 
+    .nav-item a {
+        margin-top: .5em;
+    }
+
     .header {
-        margin: 80% 2em 0;
+        margin: 60% 2em 0;
         text-align: right;
     }
 
@@ -163,6 +171,10 @@ h3 {
         position: fixed;
         top: 0;
         bottom: 0;
+    }
+
+    .brand-title {
+        margin-bottom: 0.125em;    
     }
 }
 

@@ -36,13 +36,17 @@ h3 {
   margin: 0; }
 
 .brand-title {
+  line-height: 1;
+  font-size: 2.25em;
   font-weight: 100;
   letter-spacing: 1px;
-  text-transform: uppercase; }
+  text-transform: uppercase;
+  margin-bottom: .125em; }
 
 .brand-tagline {
   margin-bottom: .5rem;
   font-weight: 300;
+  font-size: 1.3125em;
   color: #b0cadb; }
 
 .nav-list {
@@ -86,7 +90,7 @@ h3 {
   padding-bottom: 2em; }
 
 .post-title {
-  font-size: 2em;
+  font-size: 1.5em;
   color: #222;
   margin-bottom: 0.2em; }
 
@@ -137,13 +141,17 @@ h3 {
   .content {
     padding: 2em 3em 0;
     margin-left: 33.33%; }
+  .nav-item a {
+    margin-top: .5em; }
   .header {
-    margin: 80% 2em 0;
+    margin: 60% 2em 0;
     text-align: right; }
   .sidebar {
     position: fixed;
     top: 0;
-    bottom: 0; } }
+    bottom: 0; }
+  .brand-title {
+    margin-bottom: 0.125em; } }
 
 @media (min-width: 64em) {
   .content {

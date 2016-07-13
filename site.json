@@ -3,7 +3,7 @@
   "description": "The musings of a curious developer, fitness enthusiast and chair raver.",
   "url": "www.pimbrouwers.com",
   "rss": "/rss.xml",
-  "maxItems": 3,
+  "maxItems": 6,
   "concatJs": [
     "./src/js/*.js"
   ],
