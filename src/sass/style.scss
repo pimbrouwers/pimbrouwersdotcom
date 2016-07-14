@@ -23,7 +23,7 @@ h3 {
     height: auto;
 }
 
-#layout {
+#layout { 
     padding: 0;
 }
  
@@ -31,6 +31,7 @@ h3 {
     text-align: center;
     top: auto;
     margin: 1.5em auto;
+    padding: 0 1em;
 }
 
 .sidebar {
@@ -43,8 +44,7 @@ h3 {
     margin: 0;
 }
 .brand-title {    
-line-height: 1; 
-    font-size: 2.25em;
+    line-height: 1; 
     font-weight: 100;
     letter-spacing: 1px;
     text-transform: uppercase;
@@ -53,7 +53,7 @@ line-height: 1;
 .brand-tagline {
     margin-bottom: .5rem;
     font-weight: 300;
-    font-size: 1.3125em;
+    font-size: 1.25em;
     color: rgb(176, 202, 219);
 }
 
@@ -159,12 +159,13 @@ line-height: 1;
     }
 
     .nav-item a {
-        margin-top: .5em;
+        margin-top: .5em; 
     }
 
     .header {
         margin: 60% 2em 0;
         text-align: right;
+        padding: 0;  
     }
 
     .sidebar {
