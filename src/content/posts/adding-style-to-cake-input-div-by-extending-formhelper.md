@@ -1,6 +1,6 @@
 ---
 slug: adding-style-to-cake-input-div-by-extending-formhelper
-title: CakePHP – Adding Style to CakePHP Input Div by Extending FormHelper
+title: CakePHP - Adding Style to CakePHP Input Div by Extending FormHelper
 template: post.hbs
 date: 2014-11-07
 author: Pim Brouwers

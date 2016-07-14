@@ -1,6 +1,6 @@
 ---
 slug: sql-copy-just-table-structure-from-existing-table
-title: SQL: How to copy just the structure from an existing table
+title: SQL - How to copy just the structure from an existing table
 template: post.hbs
 date: 2015-03-13
 author: Pim Brouwers

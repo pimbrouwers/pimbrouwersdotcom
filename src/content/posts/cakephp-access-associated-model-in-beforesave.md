@@ -1,6 +1,6 @@
 ---
 slug: cakephp-access-associated-model-in-beforesave
-title: CakePHP: How to Access an Associated Model in beforeSave Function
+title: CakePHP - How to Access an Associated Model in beforeSave Function
 template: post.hbs
 date: 2014-09-27
 author: Pim Brouwers
