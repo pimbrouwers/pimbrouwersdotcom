@@ -1,24 +1,39 @@
 {{> header}}
 
-{{> navigation}}
-
-<div class="container">
-
+<div id="layout" class="pure-g">
+    {{> navigation}}
+<div class="content pure-u-1 pure-u-md-16-24 pure-u-lg-3-4">
+    <!-- All Posts -->
+    <div class="posts">
+        <h1 class="content-subhead">By <a href="https://plus.google.com/u/0/111830860305577267596/about" rel="author" target="_blank" class="post-author">Pim Brouwers</a></h1>
     {{#post}}
-        <div class="row">
-            <article>
-                <h1>{{title}}</h1>
-                <p class="post-meta">
-                    {{date format="MMMM Do YYYY"}}
-                    by <span>{{author.name}}</span>
-                    {{#if tags}} on {{{tags}}}{{/if}}
-                </p>
-                {{{body}}}
-            </article>
 
-        </div>
+    <!-- Post -->
+            <section class="post">
+                <header class="post-header">
+                    <!-- <img class="post-avatar" alt="Pim Brouwers&#x27;s avatar" height="48" width="48" src="{{resolve "./images/self.png"}}"> -->
+
+                    <h2 class="post-title">{{title}}</h2>
+
+                    <p class="post-meta">
+                        {{{tags}}}
+                    </p>
+                </header>
+
+                <div class="post-description">
+                    <p>
+                        {{{body}}}
+                    </p>
+                </div>
+            </section>
     {{/post}}
-
+</div>
+<div class="pagination">
+<a href="/" onclick="window.history.back();">&laquo; Back</a>
 </div>
 
+   </div>
+</div>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.5.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
 {{> footer}}
