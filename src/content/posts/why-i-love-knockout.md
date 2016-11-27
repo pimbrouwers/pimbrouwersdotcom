@@ -11,7 +11,7 @@ I love KnockoutJS. Aside from SQL, no technology I've encountered has inspired m
 Knockout is a data-centric JavaScript library, enabling you to *bind* data to your DOM. At it's core, this is all Knockout does. Exposing a simple pub/sub concept, dubbed an "observable" (there is of course much more to it). Using the observable enables you to build reactive client-side applications with minimal effort. 
 
 What Knockout **isn’t:**
-- It is a library (not a framework), intended to work in unison with your other technologies.
+- A framework. It is a library, intended to work in unison with your other technologies.
 - A complete solution. You’ll often add additional libraries to suit your use-case (ex:  to implement routing you could add in Sammy.js)
 - Slow. If done correctly (deferred updates, using pure computed functions and binding to prototypes) you can achieve tremendous performance.
 - Only good for small projects. Knockout can scale amazingly, I've built/worked on several large-scale projects with great success.
