@@ -6,7 +6,7 @@ date: 2016-11-27
 author: Pim Brouwers
 tags: KnockoutJS
 ---
-I love KnockoutJS. Aside from SQL, no technology I've encountered has inspired me quite to the level Knockout has. There's a captivating elegance to it's simplicity, and by proxy the ease in which you can learn it. And despite it's simplistic nature, it can transform JavaScript previously bound for spaghetti-town into artful solutions. It is my go to solution for any project, of any scale, requiring any JavaScript. It **enforces** organization (components, custom bindings, extensions) without **imposing** conventions.
+I love KnockoutJS. Aside from SQL, no technology I've encountered has inspired me quite to the level Knockout has. There's a captivating elegance to it's simplicity, and by proxy the ease in which you can learn it. And despite it's simplistic nature, it can transform JavaScript previously bound for spaghetti-town into artful solutions. It is my tool of choice for any project, of any scale, requiring any JavaScript. It **enforces** organization (components, custom bindings, extensions) without **imposing** conventions.
 
 Knockout is a data-centric JavaScript library, enabling you to *bind* data to your DOM. At it's core, this is all Knockout does. Exposing a simple pub/sub concept, dubbed an "observable" (there is of course much more to it). Using the observable enables you to build reactive client-side applications with minimal effort. 
 
