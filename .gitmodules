@@ -1,3 +1,6 @@
 [submodule "tools"]
 	path = tools
 	url = https://github.com/ducksoupdev/gulp-site-generator.git
+[submodule "npm-static-site"]
+	path = npm-static-site
+	url = https://github.com/pimbrouwers/npm-static-site.git
