@@ -10,3 +10,4 @@ sandbox
 test/out-fixtures/*
 test/watch-*.txt
 gulp.1
+www_dist/*

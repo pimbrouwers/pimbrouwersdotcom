@@ -1,0 +1,40 @@
+{
+	"news": [
+		{
+			"url": "/posts/why-i-love-knockoutjs",
+			"title": "Why I love KnockoutJS",
+			"links": [
+				{ "title": "KnockoutJS", "url": "/posts/tags/knockoutjs" }
+			],
+			"summary": "I love KnockoutJS. Aside from SQL, no technology I've encountered has inspired me quite to the level Knockout has. There's a captivating elegance to it's simplicity, and by proxy the ease in which you can learn it.",
+			"icon": "write"
+		},
+		{
+			"url": "/posts/why-i-love-knockoutjs",
+			"title": "Why I love KnockoutJS",
+			"links": [
+				{ "title": "KnockoutJS", "url": "/posts/tags/knockoutjs" }
+			],
+			"summary": "I love KnockoutJS. Aside from SQL, no technology I've encountered has inspired me quite to the level Knockout has. There's a captivating elegance to it's simplicity, and by proxy the ease in which you can learn it.",
+			"icon": "teach"
+		},
+		{
+			"url": "/posts/why-i-love-knockoutjs",
+			"title": "Why I love KnockoutJS",
+			"links": [
+				{ "title": "KnockoutJS", "url": "/posts/tags/knockoutjs" }
+			],
+			"summary": "I love KnockoutJS. Aside from SQL, no technology I've encountered has inspired me quite to the level Knockout has. There's a captivating elegance to it's simplicity, and by proxy the ease in which you can learn it.",
+			"icon": "chair-rave"
+		},
+		{
+			"url": "/posts/why-i-love-knockoutjs",
+			"title": "Why I love KnockoutJS",
+			"links": [
+				{ "title": "KnockoutJS", "url": "/posts/tags/knockoutjs" }
+			],
+			"summary": "I love KnockoutJS. Aside from SQL, no technology I've encountered has inspired me quite to the level Knockout has. There's a captivating elegance to it's simplicity, and by proxy the ease in which you can learn it.",
+			"icon": "open-source"
+		}
+	]	
+}

@@ -1,0 +1,56 @@
+body {
+    background: @theme-light-gray;
+    color: @theme-gray;
+    font-size: 18px;
+}
+
+h1, h2, h3, h4, h5, a {
+    font-family: 'Open Sans', sans-serif;
+}
+
+a {
+    color: @theme-gray;
+    transition: color .3125s linear;
+}
+
+a:hover {
+    color: @theme-green;
+}
+
+.contain {
+    margin: 0 auto;
+    max-width: 640px;
+    padding: 0 1em;
+}
+
+.spacer {
+    background: #ddd;
+    height: 1px;
+    margin: 2em auto;
+    max-width: 320px;
+}
+
+@media screen and (min-width: 35.5em) {
+    .spacer {
+        max-width: 420px;
+    }
+}
+
+@media screen and (min-width: 48em) {
+    body {
+        font-size: 20px;
+    }
+}
+
+@media screen and (min-width: 64em) {
+    body {
+        font-size: 22px;
+    }
+}
+
+@media screen and (min-width: 80em) {
+    body {
+        font-size: 24px;
+    }
+}
+

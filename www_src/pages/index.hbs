@@ -1,0 +1,31 @@
+{{> head }} {{> header }} {{> spacer }}
+
+<main class="main contain">
+	{{#each news }}
+    <section class="post">
+        <header>
+            <div class="post-icon">
+                <img src="/img/icon/{{icon}}.svg" alt="{{icon}}" />
+            </div>
+            <div class="post-title">
+                <h2><a href="{{url}}">{{title}}</a></h2>
+
+                {{#if links }}
+                <p>
+                    {{#each links}}
+                        <a href="{{url}}">{{title}}</a>
+                    {{/each}}
+                </p>
+                {{/if}}
+            </div>
+        </header>
+        <div class="post-description">
+            <p>{{summary}}</p>
+        </div>
+    </section>
+    {{/each }}
+</main>
+
+{{> footer }}
+{{> foot }}
+
