@@ -1,56 +1,62 @@
 body {
-    background: @theme-light-gray;
-    color: @theme-gray;
-    font-size: 18px;
+    background-color: @theme-black;
+    color: @raw;
+    font-size: 1.75em;
+    padding: 2rem 8%;
+    text-align: center;         
 }
 
-h1, h2, h3, h4, h5, a {
-    font-family: 'Open Sans', sans-serif;
+.bat-eyes {
+    animation: batEyes 1.5s ease, opacity100 1.5s ease;
+}
+
+.bat-face {
+    animation: batFace 1.5s ease, opacity100 1.5s ease;
+}
+
+h1, h2, a, h3, p {
+    animation: opacity100 1s ease;
+}
+
+h1,h2,h3 {
+    font-weight: 400;
+}
+
+h1 {
+    color: @theme-yellow;   
+    line-height: 1;
+    text-transform: uppercase;
+}
+
+h2 a {
+    border: 0;
+    margin: 0.5rem;
+}
+
+h3 {
+    line-height: 1.4;
 }
 
 a {
-    color: @theme-gray;
-    transition: color .3125s linear;
+    border-bottom: .1875rem solid @raw;
+    text-decoration: none;
+    transition: all .25s ease
 }
 
 a:hover {
-    color: @theme-green;
+    border-color: @theme-yellow;
+    color: @theme-yellow;
 }
 
-.contain {
-    margin: 0 auto;
-    max-width: 640px;
-    padding: 0 1em;
-}
-
-.spacer {
-    background: #ddd;
-    height: 1px;
-    margin: 2em auto;
-    max-width: 320px;
-}
-
-@media screen and (min-width: 35.5em) {
-    .spacer {
-        max-width: 420px;
-    }
-}
-
-@media screen and (min-width: 48em) {
+@media only screen and (min-width: 960px){
     body {
-        font-size: 20px;
+        font-size: 3.125em; 
+        padding: 4rem 8rem;         
     }
 }
 
-@media screen and (min-width: 64em) {
-    body {
-        font-size: 22px;
+@media only screen and (min-width: 1280px){
+    body {              
+        padding: 4rem 18rem;            
     }
 }
-
-@media screen and (min-width: 80em) {
-    body {
-        font-size: 24px;
-    }
-}
-
