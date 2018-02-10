@@ -1,0 +1,23 @@
+{
+  "dependencies": {
+    "ditt0": "pimbrouwers/ditto",
+    "ditt0-hbs": "pimbrouwers/ditto-hbs",
+    "ditt0-markdown": "pimbrouwers/ditto-markdown",
+    "http-server": "^0.11.1",
+    "hydrogen": "pimbrouwers/hydrogen",
+    "less": "latest",
+    "less-plugin-clean-css": "latest",
+    "npm-run-all": "latest",
+    "watch": "^1.0.2"
+  },
+  "scripts": {
+    "less": "lessc --clean-css ./css/style.less ./public/style.css",
+    "pages": "node index.js",
+    "server": "http-server ./public",
+    "watch:less": "watch \"npm run less\" ./css --ignoreDotFiles --ignoreUnreadable",
+    "watch:pages": "watch \"npm run pages\" ./src --ignoreDotFiles --ignoreUnreadable",
+    "watch:templates": "watch \"npm run pages\" ./templates --ignoreDotFiles --ignoreUnreadable",
+    "watch": "run-p watch:*",
+    "start": "run-p watch server"
+  }
+}
