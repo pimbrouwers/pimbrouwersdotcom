@@ -1,6 +1,6 @@
 @import (less) "../node_modules/hydrogen-css/dist/hydrogen.min.css";
 
-@white: #f2f2f2;
+@white: #e0e0e0;
 @black: #000d1a;
 @mint: lighten(rgb(117, 211, 178), 14%, 'relative');
 
@@ -12,25 +12,19 @@ body {
   color: @white;
 }
 
-.background-black {
-  background: @black;
-}
-
-.stage {
-  font-family: 'Mukta Mahee', sans-serif;
-}
-
 h1 {
   font-size: 3rem;
   font-weight: 800;
 }
 
 h2, p, .project-title, .project-description {
+  font-size: 2.5rem;
   font-weight: 100;
 } 
 
 p, .project-title, .project-description {
-  font-size: 1.5rem;
+  font-size: 2rem;
+  line-height: 1.6;
   margin-bottom: 2rem;
 }
 
@@ -51,23 +45,27 @@ a {
   }
 }
 
+.background-black {
+  background: @black;
+}
+
 .project-title {      
   a {
     display: inline-block;
-    padding-bottom: .5rem;
-  }
-
-  .project-description {
-    margin-left: 1rem;
   }
 }
 
+.section {
+  opacity: 0;
+  animation: fadeIn .625s ease-out forwards;
+}
+
 .stage {
+  font-family: 'Mukta Mahee', sans-serif;
   margin: 0 auto;
   max-width: 48rem;
   padding: 0 1rem;
-  width: 48rem;
-
+  
   &.emphasize:hover {
 
     p {
@@ -93,5 +91,24 @@ a {
   p, .project-title, .project-description {
     font-size: 2.5rem;
     margin-bottom: 3rem;
+  }
+
+  .project-title {
+    .project-description {
+      margin-left: 1rem;
+    }
+  }
+
+  .stage {
+    width: 48rem;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity:  0;
+  }
+  to {
+    opacity: 1;
   }
 }

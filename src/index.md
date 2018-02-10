@@ -3,14 +3,14 @@ title: Pim Brouwers - Builder of digital things.
 description: Problem solver, serial learner, and builder of digital things.
 ---
 
-<section class="h-full h-flex h-flex-column h-flex-justify-center h-text-center">
+<section class="section h-full h-flex h-flex-column h-flex-justify-center h-text-center">
   <div class="stage">
     <h1>Pim Brouwers</h1>
     <h2>Builder of digital things.</h2>
   </div>
 </section>
 
-<section class="h-full h-flex h-flex-column h-flex-justify-center">
+<section class="section h-full h-flex h-flex-column h-flex-justify-center">
   <div class="stage emphasize">
   <p>I'm a <span class="keyword">problem solver</span>, serial <span class="keyword">learner</span>, and <span class="keyword">builder</span> of digital things.</p>
 
@@ -21,7 +21,7 @@ description: Problem solver, serial learner, and builder of digital things.
 </section>
 
 
-<section class="h-full h-flex h-flex-column h-flex-justify-center">
+<section class="section h-full h-flex h-flex-column h-flex-justify-center">
   <div class="stage">
     <div class="project-title">
       <a class="border" title="Hydrogen - modular CSS foundation" href="https://pimbrouwers.github.io/hydrogen/" target="_blank">Hydogen</a>
@@ -42,7 +42,7 @@ description: Problem solver, serial learner, and builder of digital things.
   </div>
 </section>
 
-<section class="h-full h-flex h-flex-column h-flex-justify-center">
+<section class="section h-full h-flex h-flex-column h-flex-justify-center">
   <div class="stage emphasize">
     <p>I currently work at the <a class="keyword" href="https://www.nhlpa.com" target="_blank">National Hockey League Players' Association</a> in Toronto, ON.</p>
     <p>I <a class="keyword" href="/blog" target="_blank">write</a> occasionally on my blog, <a class="keyword" href="https://stackoverflow.com/search?q=user%3A2421277" target="_blank">help</a> other developers write better code, share my <a class="keyword" href="https://500px.com/mathijspim" target="_blank">photos</a> on 500px and my <a class="keyword" href="https://github.com/pimbrouwers" target="_blank">code</a> on GitHub.
