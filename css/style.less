@@ -4,33 +4,38 @@
 @black: #000d1a;
 @mint: lighten(rgb(117, 211, 178), 14%, 'relative');
 
-* {
-  transition: all .3125s ease-in;
-}
-
 body {
   color: @white;
 }
 
+
+
 h1 {
   font-size: 3rem;
   font-weight: 800;
+  transition: font-size .3125s ease-out;
+}
+
+h2 {
+  transition: font-size .3125s ease-out;
 }
 
 h2, p, .project-title, .project-description {
   font-size: 2.5rem;
-  font-weight: 100;
+  font-weight: 100; 
 } 
 
 p, .project-title, .project-description {
   font-size: 2rem;
   line-height: 1.6;
   margin-bottom: 2rem;
+  transition: all .3125s ease-out;
 }
 
 a {
   color: @white;
   text-decoration: none;
+  transition: all .3125s ease-out;
 
   &:hover {
     color: @mint;
