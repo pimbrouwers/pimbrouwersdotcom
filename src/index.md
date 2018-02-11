@@ -29,11 +29,7 @@ description: Problem solver, serial learner, and builder of digital things.
     <div class="project-title">
       <a class="border" title="Hydrogen - modular CSS foundation" href="https://pimbrouwers.github.io/hydrogen/" target="_blank">Hydogen</a>
       <span class="project-description">modular CSS foundation</span>
-    </div>      
-    <div class="project-title">
-      <a class="border" title="Ditto - extensible build tool" href="https://github.com/pimbrouwers/ditto" target="_blank">Ditto</a>
-      <span class="project-description">extensible build tool</span>
-    </div>
+    </div>          
     <div class="project-title">
       <a class="border" title="Sequel - fluent query builder" href="https://github.com/pimbrouwers/sequel" target="_blank">Sequel</a>
       <span class="project-description">fluent query builder</span>
@@ -41,6 +37,10 @@ description: Problem solver, serial learner, and builder of digital things.
     <div class="project-title">
       <a class="border" title="Httipi - makes HTTP requests easier" href="https://github.com/pimbrouwers/httipi" target="_blank">Httipi</a>
       <span class="project-description">makes HTTP requests easier</span>
+    </div>
+    <div class="project-title">
+      <a class="border" title="Ditto - extensible build tool" href="https://github.com/pimbrouwers/ditto" target="_blank">Ditto</a>
+      <span class="project-description">extensible build tool</span>
     </div>
   </div>
 </section>

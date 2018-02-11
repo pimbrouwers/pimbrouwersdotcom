@@ -2,7 +2,7 @@
 
 @white: #e0e0e0;
 @black: #000d1a;
-@mint: lighten(rgb(117, 211, 178), 14%, 'relative');
+@mint: #1abc9c;
 
 body {
   color: @white;
@@ -10,8 +10,8 @@ body {
 
 .logo {
   position: absolute;
-  left: 5%;
-  top: 3%;
+  left: 1.5rem;
+  top: 1.5rem;
 }
 
 .title {
@@ -28,6 +28,10 @@ p, .project-title, .project-description {
   font-size: 2rem;
   line-height: 1.6;
   margin-bottom: 2rem;
+}
+
+p, .keyword {
+  transition: color .3125s ease-in-out;
 }
 
 a {
@@ -69,6 +73,7 @@ a {
   max-width: 48rem;
   padding: 0 1rem;
   
+  
   &.emphasize:hover {
 
     p {
@@ -84,8 +89,8 @@ a {
 
 @media screen and (min-width: 64rem) {
   .logo {
-    left: 3%;
-    top: 5%;
+    left: 3rem;
+    top: 3rem;
   }
 
   .title {
