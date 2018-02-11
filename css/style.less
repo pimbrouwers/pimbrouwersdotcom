@@ -8,19 +8,18 @@ body {
   color: @white;
 }
 
+.logo {
+  position: absolute;
+  left: 5%;
+  top: 3%;
+}
 
-
-h1 {
+.title {
   font-size: 3rem;
   font-weight: 800;
-  transition: font-size .3125s ease-out;
 }
 
-h2 {
-  transition: font-size .3125s ease-out;
-}
-
-h2, p, .project-title, .project-description {
+.subtitle, p, .project-title, .project-description {
   font-size: 2.5rem;
   font-weight: 100; 
 } 
@@ -29,7 +28,6 @@ p, .project-title, .project-description {
   font-size: 2rem;
   line-height: 1.6;
   margin-bottom: 2rem;
-  transition: all .3125s ease-out;
 }
 
 a {
@@ -62,7 +60,7 @@ a {
 
 .section {
   opacity: 0;
-  animation: fadeIn .625s ease-out forwards;
+  animation: fadeIn 1s ease-out forwards;
 }
 
 .stage {
@@ -85,11 +83,16 @@ a {
 }
 
 @media screen and (min-width: 64rem) {
-  h1 {
+  .logo {
+    left: 3%;
+    top: 5%;
+  }
+
+  .title {
     font-size: 6rem;
   }
 
-  h2 {
+  .subtitle {
     font-size: 3.5rem;
   }
 

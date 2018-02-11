@@ -2,11 +2,14 @@
 title: Pim Brouwers - Builder of digital things.
 description: Problem solver, serial learner, and builder of digital things.
 ---
+<a class="logo" href="/">
+  <img src="/img/logo.png" alt="Personal logo">
+</a>
 
 <section class="section h-full h-flex h-flex-column h-flex-justify-center h-text-center">
   <div class="stage">
-    <h1>Pim Brouwers</h1>
-    <h2>Builder of digital things.</h2>
+    <h1 class="title">Pim Brouwers</h1>
+    <h2 class="subtitle">Builder of digital things.</h2>
   </div>
 </section>
 
