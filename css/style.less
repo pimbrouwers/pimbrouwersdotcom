@@ -47,7 +47,9 @@ a {
   background: @black;
 }
 
-.project-title {      
+.project-title {     
+  text-align: center;
+
   a {
     background: @white;
     color: @black;
@@ -58,6 +60,10 @@ a {
     &:hover {
       background: @mint;
     }
+  }
+
+  .project-description {
+    display: block;
   }
 }
 
@@ -106,7 +112,10 @@ a {
   }
 
   .project-title {
+    text-align: left;
+    
     .project-description {
+      display: inline-block;
       margin-left: 1rem;
     }
   }

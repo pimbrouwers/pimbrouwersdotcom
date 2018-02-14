@@ -48,6 +48,6 @@ description: Problem solver, serial learner, and builder of digital things.
 <section class="section h-full h-flex h-flex-column h-flex-justify-center">
   <div class="stage emphasize">
     <p>I currently work at the <a class="keyword" href="https://www.nhlpa.com" target="_blank">National Hockey League Players' Association</a> in Toronto, ON.</p>
-    <p>I <a class="keyword" href="/blog" target="_blank">write</a> occasionally, <a class="keyword" href="https://stackoverflow.com/search?q=user%3A2421277" target="_blank">help</a> other developers write better code, share my <a class="keyword" href="https://500px.com/mathijspim" target="_blank">photos</a> and my <a class="keyword" href="https://github.com/pimbrouwers" target="_blank">code</a>.
+    <p>I <a class="keyword" href="https://www.linkedin.com/in/mpbrouwers/detail/recent-activity/posts/" target="_blank">write</a> occasionally, <a class="keyword" href="https://stackoverflow.com/search?q=user%3A2421277" target="_blank">help</a> other developers write better code, share my <a class="keyword" href="https://500px.com/mathijspim" target="_blank">photos</a> and my <a class="keyword" href="https://github.com/pimbrouwers" target="_blank">code</a>.
   </div>
 </section>
