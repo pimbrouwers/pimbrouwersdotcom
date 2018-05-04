@@ -17,7 +17,7 @@ description: Problem solver, serial learner, and builder of digital things.
   <div class="stage emphasize">
   <p>I'm a <span class="keyword">problem solver</span>, serial <span class="keyword">learner</span>, and <span class="keyword">builder</span> of digital things.</p>
   
-  <p>Experienced in <span class="keyword">system design</span>, <span class="keyword">web software</span> and <span class="keyword">data architecture</span>.</p>
+  <p>Experienced in <span class="keyword">system design</span>, <span class="keyword">cloud architecture</span> and <span class="keyword">database administration</span>.</p>
   
   <p>I currently work at the <a class="keyword" href="https://www.nhlpa.com" target="_blank">National Hockey League Players' Association</a> in Toronto, ON.</p>
     <p>I <a class="keyword" href="https://www.linkedin.com/in/mpbrouwers/detail/recent-activity/posts/" target="_blank">write</a> occasionally, <a class="keyword" href="https://stackoverflow.com/search?q=user%3A2421277" target="_blank">help</a> other developers write better code, share my <a class="keyword" href="https://500px.com/mathijspim" target="_blank">photos</a> and my <a class="keyword" href="https://github.com/pimbrouwers" target="_blank">code</a>.
