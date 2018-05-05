@@ -12,4 +12,8 @@
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.7" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Pimbrouwersdotcom.Data\Pimbrouwersdotcom.Data.csproj" />
+  </ItemGroup>
+
 </Project>

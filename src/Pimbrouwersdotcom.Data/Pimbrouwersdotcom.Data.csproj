@@ -6,7 +6,11 @@
 
   <ItemGroup>
     <PackageReference Include="dapper" Version="1.50.4" />
-    <PackageReference Include="sequel" Version="1.0.0" />
+    <PackageReference Include="sequel" Version="1.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Pimbrouwersdotcom.Domain\Pimbrouwersdotcom.Domain.csproj" />
   </ItemGroup>
 
 </Project>
