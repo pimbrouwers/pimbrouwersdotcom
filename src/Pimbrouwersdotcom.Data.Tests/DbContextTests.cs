@@ -1,5 +1,6 @@
 using Microsoft.Data.Sqlite;
 using Pimbrouwersdotcom.Domain;
+using Pimbrouwersdotcom.Web;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -16,7 +17,7 @@ namespace Pimbrouwersdotcom.Data.Tests
 
     public DbContextTests()
     {
-      connectionFactory = new SqliteConnectionFactory("data source=./../../../../../pimbrouwersdotcom_test.db");
+      connectionFactory = new SqliteConnectionFactory("data source=./../../../../../pimbrouwersdotcom_test.sqlite3");
       db = new DbContext(connectionFactory);
 
       string schema = System.IO.File.ReadAllText("./../../../../../schema.sql");
