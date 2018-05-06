@@ -1,0 +1,34 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+  <title>Admin | Pim Brouwers - Builder of digital things.</title>
+  <link rel="icon" type="image/x-icon" href="data:image/x-icon;base64,AAABAAEAEBAQAAEABAAoAQAAFgAAACgAAAAQAAAAIAAAAAEABAAAAAAAgAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAt9LrAPLw7QAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABEREREREREAEREAAAAREQARERERERERAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAiAAAAIgAAACAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP8AAAH/gAAD/8AAB//AAA">
+
+  <link href="https://fonts.googleapis.com/css?family=Mukta+Mahee:200,800" rel="stylesheet">
+  <link rel="stylesheet" href="~/css/admin.min.css">
+</head>
+<body>
+  <header class="header">
+    <div class="stage">      
+      <div class="logo">
+        <img src="~/img/logo.png" />
+      </div>
+      <h5 class="brand">Pim Brouwers Dotcom &mdash; <span class="h-font-weight-400">website manager.</span></h5>
+      <nav class="navigation">        
+        <a asp-controller="Post" asp-action="Index">Posts</a>
+        <a asp-controller="Post" asp-action="Create">New Post</a>
+      </nav>
+    </div>    
+  </header>
+
+  <main role="main" class="stage h-clear">
+    @RenderBody()
+  </main>
+  <script src="~/bundle.js"></script>
+</body>
+</html>

@@ -1,0 +1,29 @@
+﻿@model PostCreateModel
+
+<h1 class="h-title">New Post</h1>
+
+<form class="h-form" method="post">
+  <div asp-validation-summary="All"></div>
+
+  <fieldset>
+    <label>Title</label>
+    <input class="h-margin-bottom" asp-for="Post.Title" />
+
+    <label>TLDR</label>
+    <input class="h-margin-bottom" asp-for="Post.Tldr" />
+    
+    <label>Date</label>
+    <input class="h-margin-bottom"  type="date" asp-for="Post.Dt" />
+
+    <label>Tags</label>
+    <input class="h-margin-top h-margin-bottom" asp-for="Tags" />
+
+    <label>Body</label>
+    <textarea class="h-margin-bottom" asp-for="Post.Body" data-bind="simpleMde"></textarea>
+        
+  </fieldset>
+
+  <div class="h-text-right h-margin-top h-margin-bottom">
+    <button class="h-btn">Save</button>
+  </div>
+</form>

@@ -1,0 +1,18 @@
+﻿@model PostIndexModel
+
+<h1 class="h-title">Posts</h1>
+
+<section class="posts">
+  @foreach (var post in Model.Posts)
+  {
+    <article class="post">
+      <h2 class="h-margin-bottom-0">
+        <a asp-controller="Post" asp-action="Edit" asp-route-id="@post.Id">@post.Title</a>
+      </h2>
+
+      <p><small>@post.Dt.ToShortDateString()</small></p>
+
+      <p>@post.Tldr</p>
+    </article>
+  }
+</section>

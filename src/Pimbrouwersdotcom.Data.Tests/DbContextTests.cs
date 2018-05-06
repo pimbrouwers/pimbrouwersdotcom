@@ -41,7 +41,7 @@ namespace Pimbrouwersdotcom.Data.Tests
 
       var post = await db.Post.Read(id);
 
-      Assert.Equal("Title", post.Title);
+      Assert.Equal(id, post.Id);
     }
 
     [Fact]
@@ -63,7 +63,7 @@ namespace Pimbrouwersdotcom.Data.Tests
       post = await db.Post.Read(id);
 
       Assert.True(updated);
-      Assert.Equal("Title3", post.Title);
+      Assert.Equal(id, post.Id);
     }
 
     [Fact]
@@ -120,7 +120,7 @@ namespace Pimbrouwersdotcom.Data.Tests
       var postAfterCreate = await db.Post.Read(postId);
       var tags = await db.Tag.FirstByPostId(postId);
 
-      Assert.Equal("Title", postAfterCreate.Title);
+      Assert.Equal(postId, postAfterCreate.Id);
       Assert.Equal(3, tags.Count());
     }
 
@@ -135,6 +135,38 @@ namespace Pimbrouwersdotcom.Data.Tests
       var tag = await db.Tag.FindByLabel("CreateTa");
 
       Assert.Equal(id, tag.Id);
+    }
+
+    [Fact]
+    public async Task PageDescPost()
+    {
+      int id = await db.Post.Create(new Post()
+      {
+        Title = "Title",
+        Tldr = "test test test",
+        Body = "sljkdsaj dslkjsalkjdsa lkkjdlksajd lkdlkjdslkja",
+        Dt = new DateTime(2018, 1, 1)
+      });
+
+      int id2 = await db.Post.Create(new Post()
+      {
+        Title = "Title2",
+        Tldr = "test test test",
+        Body = "sljkdsaj dslkjsalkjdsa lkkjdlksajd lkdlkjdslkja",
+        Dt = new DateTime(2018, 2, 1)
+      });
+
+      int id3 = await db.Post.Create(new Post()
+      {
+        Title = "Title3",
+        Tldr = "test test test",
+        Body = "sljkdsaj dslkjsalkjdsa lkkjdlksajd lkdlkjdslkja",
+        Dt = new DateTime(2018, 3, 1)
+      });
+
+      var posts = await db.Post.Page(new DateTime(2018, 3, 1));
+
+      Assert.Equal(2, posts.Count());
     }
 
     [Fact]
@@ -170,7 +202,7 @@ namespace Pimbrouwersdotcom.Data.Tests
       var postAfterCreate = await db.Post.Read(postId);
       var tags = await db.Tag.FirstByPostId(postId);
 
-      Assert.Equal("Title", postAfterCreate.Title);
+      Assert.Equal(postId, postAfterCreate.Id);
       Assert.Equal(2, tags.Count());
 
       postAfterCreate.Title = "Title2";

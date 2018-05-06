@@ -1,0 +1,15 @@
+﻿@model PostIndexModel
+
+@if (Model.Posts != null && Model.Posts.Any())
+{
+  foreach (var post in Model.Posts)
+  {
+  <article class="post">
+    <h1>@post.Title</h1>
+    
+    <blockquote class="h-blockquote">@post.Tldr</blockquote>
+
+    <a asp-controller="Post" asp-action="Details" asp-route-id="@post.Id">Continue reading...</a>
+  </article>
+  }
+}

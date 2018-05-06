@@ -1,4 +1,4 @@
-using FluentValidation; 
+using FluentValidation;
 
 namespace Pimbrouwersdotcom.Domain
 {
@@ -13,6 +13,7 @@ namespace Pimbrouwersdotcom.Domain
     public TagValidator()
     {
       RuleFor(t => t.Label)
+        .NotEmpty()
         .MaximumLength(255);
     }
   }

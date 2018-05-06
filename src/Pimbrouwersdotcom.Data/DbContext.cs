@@ -1,7 +1,14 @@
 namespace Pimbrouwersdotcom.Data
 {
+  public enum OrderBy
+  {
+    Desc,
+    Asc
+  }
+
   public class DbContext
   {
+    private AccountRepository account;
     private PostRepository post;
     private TagRepository tag;
 
@@ -11,6 +18,19 @@ namespace Pimbrouwersdotcom.Data
     }
 
     public IDbConnectionFactory ConnectionFactory { get; }
+
+    public AccountRepository Account
+    {
+      get
+      {
+        if (account == null)
+        {
+          account = new AccountRepository(ConnectionFactory);
+        }
+
+        return account;
+      }
+    }
 
     public PostRepository Post
     {

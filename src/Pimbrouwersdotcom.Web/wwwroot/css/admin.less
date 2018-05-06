@@ -1,0 +1,81 @@
+﻿@import "_base.less";
+@import (less) "../../node_modules/simplemde/dist/simplemde.min.css";
+
+body {
+  background: @raw;
+  color: @black;
+}
+
+a {
+  color: @medium-rare;
+  text-decoration: none;
+  transition: color ease-in .25s;
+
+  &:hover {
+    color: @medium;
+  }
+}
+
+//header
+.header {
+  margin: 1rem 0;
+  overflow: hidden;
+
+  .brand {
+    margin-bottom: .3125rem;
+  }
+
+  .logo {
+    margin-bottom: 1rem;
+  }
+
+  .navigation {
+    a {
+      margin-right: .5rem;
+    }
+  }
+}
+
+//forms
+.h-form {
+  textarea {
+    resize: vertical;
+  }
+}
+
+//validation
+.validation-summary-errors {
+  border: 1px solid red;
+  background: lighten(red, 85%, 'relative');
+  color: red;
+  margin: 0 0 1rem;
+  padding: .5rem 1rem;
+
+  ul {
+    margin: 0;
+  }
+}
+
+.posts {
+  .post {        
+    padding: .25rem 0;
+  }
+}
+
+@media screen and (min-width: 48rem) {
+  .brand, .navigation {
+    float: left;
+    clear: left;
+  }
+
+  .logo {
+    float: right;
+    margin: 0;
+  }
+
+  .posts {
+    .post {
+      padding: 1.25rem 0;
+    }
+  }
+}

@@ -1,0 +1,22 @@
+﻿@model AccountLoginModel
+@{ 
+  Layout = "_Login";
+}
+
+<h1 class="h-title h-margin-top">Login</h1>
+
+<form class="h-form" method="post">
+  <div asp-validation-summary="All"></div>
+
+  <fieldset>
+    <label>Username</label>
+    <input class="h-margin-bottom" asp-for="Username" />
+
+    <label>Password</label>
+    <input class="h-margin-bottom" type="password" asp-for="Password" />
+  </fieldset>
+
+  <div class="h-text-right">
+    <button class="h-btn">Login</button>
+  </div>
+</form>

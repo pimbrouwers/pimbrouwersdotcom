@@ -55,15 +55,28 @@ namespace Pimbrouwersdotcom.Data
       return (await ExecuteScalar<int>(sql, new { postId, tagId }, transaction, commandTimeout)) == 1;
     }
 
-    public async Task<IEnumerable<Post>> PageDesc(int sinceId, int take = 3, int? commandTimeout = null)
+    public async Task<IEnumerable<Post>> Page(DateTime? dt = null, OrderBy order = OrderBy.Desc, int take = 3, int? commandTimeout = null)
     {
-      var sql = new SqlBuilder()
+      var sqlBuilder = new SqlBuilder()
         .Select("*")
         .From("Post")
-        .Where("Id > @sinceId")
-        .ToSql();
+        .Limit(take);
 
-      return await Query(sql, new { sinceId }, commandTimeout: commandTimeout);
+      if (dt.HasValue)
+      {
+        sqlBuilder.Where("Dt < @dt");
+      }
+
+      if (order == OrderBy.Desc)
+      {
+        sqlBuilder.OrderByDesc("Dt");
+      }
+      else
+      {
+        sqlBuilder.OrderBy("Dt");
+      }
+
+      return await Query(sqlBuilder.ToSql(), new { dt }, commandTimeout: commandTimeout);
     }
   }
 }

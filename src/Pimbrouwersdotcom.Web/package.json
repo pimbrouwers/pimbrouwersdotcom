@@ -1,0 +1,16 @@
+{
+  "dependencies": {
+    "hydrogen-css": "pimbrouwers/hydrogen",
+    "knockout": "^3.4.2",
+    "simplemde": "^1.11.2"
+  },
+  "devDependencies": {
+    "browserify": "^16.2.0",
+    "uglify-js": "^3.3.23",
+    "watchify": "^3.11.0"
+  },
+  "scripts": {
+    "build": "browserify wwwroot/js/index.js | uglifyjs > wwwroot/bundle.js",
+    "watch": "watchify wwwroot/js/index.js -o wwwroot/bundle.js --debug --verbose"
+  }
+}

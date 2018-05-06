@@ -10,7 +10,7 @@ namespace Pimbrouwersdotcom.Domain
     public string Title { get; set; }
     public string Tldr { get; set; }
     public string Body { get; set; }
-    public DateTime Created { get; set; } = DateTime.UtcNow;
+    public DateTime Dt { get; set; } = DateTime.Now;
 
     public IEnumerable<Tag> Tags { get; set; }
   }
@@ -20,13 +20,19 @@ namespace Pimbrouwersdotcom.Domain
     public PostValidator()
     {
       RuleFor(p => p.Title)
+        .NotEmpty()
         .MaximumLength(100);
 
       RuleFor(p => p.Tldr)
+        .NotEmpty()
         .MaximumLength(255);
 
       RuleFor(p => p.Body)
+        .NotEmpty()
         .MaximumLength(4000);
+
+      RuleFor(p => p.Dt)
+        .NotEmpty();
     }
   }
 }
