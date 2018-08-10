@@ -3,30 +3,23 @@ const minify = require('html-minifier').minify;
 /*
  * Ditto HTML Minification Middleware
  */
-module.exports = DittoHtmlMinify;
+module.exports = dittoMinify;
 
-function DittoHtmlMinify(opt) {
-  this.opt = opt || {};
-};
+function dittoMinify(opt) {
+  opt = opt || {};
 
-/**
- * Ditto HTML Minification parsing middleware
- * @param {Array.<Object.<DittoFile>>} files 
- * @param {Object.<Ditto>} Ditto 
- * @param {Function} done 
- */
-DittoHtmlMinify.prototype.run = function(files, Ditto, done) {
-  let self = this;
-  
-  files.forEach(function(file) {
-    if (file.content != 'undefined' && file.content != null) {
-      let minified = minify(file.content, self.opt);
+  return function (files, ditto, done) {    
+    files.forEach(function (file) {      
       
-      if (minified != 'undefined' && minified != null) {
-        file.content = minified;
+      if (file.content != 'undefined' && file.content != null && file.content != '') {
+        let minified = minify(file.content, opt);
+        
+        if (minified != 'undefined' && minified != null) {
+          file.content = minified;
+        }
       }
-    }
-  });
+    });
 
-  done(null, files);
+    done(null, files);
+  };
 };

@@ -1,128 +1,71 @@
 @import (less) "../node_modules/hydrogen-css/dist/hydrogen.min.css";
 
-@white: #e0e0e0;
-@black: #000d1a;
-@mint: #48dfc0;
+@white: rgb(255, 255, 255);
+@blue: rgb(0, 128, 255);
+@purple: rgb(64, 0, 255);
+@mint: rgb(0, 255, 128);
 
 body {
-  color: @white;
-}
-
-.logo {
-  position: absolute;
-  left: 1.5rem;
-  top: 1.5rem;
-}
-
-.title {
-  font-size: 3rem;
-  font-weight: 800;
-}
-
-.subtitle, p, .project-title, .project-description {
-  font-size: 2.5rem;
-  font-weight: 100; 
-} 
-
-p, .project-title, .project-description {
-  font-size: 2rem;
-  line-height: 1.6;
-  margin-bottom: 2rem;
-}
-
-p, .keyword {
-  transition: color .3125s ease-in-out;
+  background: @white;
+  font-size: 1.25rem;
+  line-height: 1.5;
 }
 
 a {
-  color: @white;
-  text-decoration: none;
-  transition: all .3125s ease-out;
+  color: @blue;
 
-  &:hover {
-    color: @mint;
+  &:visited{
+    color: darken(@blue, 7%);
   }
 }
 
-.background-black {
-  background: @black;
+h1 {
+  font-size: 2.75em;  
+  margin-bottom: .75em;
 }
 
-.project-title {     
-  text-align: center;
+h2 {
+  font-size: 1.75em;
+  margin: 1.5em 0 .75em;
+}
 
-  a {
-    background: @white;
-    color: @black;
-    display: inline-block;
-    padding: 0 .5rem;
-    text-decoration: none;
+blockquote {
+  .h-blockquote;  
+  background: @white;  
+  font-size: 75%;
+  margin:  0 0 1.25em;
+  opacity: .7;
 
-    &:hover {
-      background: @mint;
+  p {    
+    &:last-child {
+      margin: 0;
     }
-  }
-
-  .project-description {
-    display: block;
-  }
+  }  
 }
 
-.section {
-  opacity: 0;
-  animation: fadeIn 1s ease-out forwards;
-}
-
-.stage {
-  font-family: 'Mukta Mahee', sans-serif;
+.stage {  
   margin: 0 auto;
-  max-width: 48rem;
-  padding: 0 1rem;
-  
-  
-  &.emphasize:hover {
-
-    p {
-      color: darken(@white, 56%, 'relative');
-    }    
-
-    .keyword {
-      color: @white;
-    }
-  }
-
+  max-width: 40rem;
+  padding: 1em;
 }
 
-@media screen and (min-width: 64rem) {
-  .logo {
-    left: 3rem;
-    top: 3rem;
-  }
-
-  .title {
-    font-size: 6rem;
-  }
-
-  .subtitle {
-    font-size: 3.5rem;
-  }
-
-  p, .project-title, .project-description {
-    font-size: 2.5rem;
-    margin-bottom: 3rem;
-  }
-
-  .project-title {
-    text-align: left;
-    
-    .project-description {
-      display: inline-block;
-      margin-left: 1rem;
+.header {
+  .me {
+    img {
+      border-radius: 100%;
     }
   }
+}
 
-  .stage {
-    width: 48rem;
+.post-list {
+  list-style-type: none;
+
+  li {
+    margin: 0 0 .5em;
+  }
+
+  .post-date {
+    font-size: 65%;
   }
 }
 
@@ -132,5 +75,12 @@ a {
   }
   to {
     opacity: 1;
+  }
+}
+
+@media screen and (min-width: 30rem)
+{
+  body {
+    font-size: 1.5rem;
   }
 }

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+    <title>{{title}}</title>
+    <meta name="description" content="{{description}}">
+
+    <!-- open graph -->
+    <meta property="og:title" content="{{title}}">
+    <meta property="og:description" content="{{description}}">
+    <meta property="og:image" content="{{metdata.gravatar}}?s=300">
+
+    <!-- twitter card -->
+    <meta property="twitter:account_id" content="510673212">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:site" content="@mathijspim">
+    <meta name="twitter:creator" content="@mathijspim">
+
+    <meta name="google-site-verification" content="{{meta.googleSiteVerification}}">
+    <link rel="icon" type="image/x-icon" href="data:image/x-icon;base64,AAABAAEAEBAQAAEABAAoAQAAFgAAACgAAAAQAAAAIAAAAAEABAAAAAAAgAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAt9LrAPLw7QAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABEREREREREAEREAAAAREQARERERERERAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAiAAAAIgAAACAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP8AAAH/gAAD/8AAB//AAA">
+    
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  {{> header}} 
+
+  <main class="content stage" role="main">
+    <section>
+    {{{body}}}
+    </section>
+
+    <h2>Posts</h2>
+    <ul class="post-list">
+      {{#each metadata.posts}}
+        <li>
+          <div class="post-date">{{content.date}}</div>
+          <div class="post-link">
+            <a href="{{pathWithoutExtension}}">{{content.title}}</a>
+          </div>
+        </li>
+      {{/each}}
+    </ul>
+  </main>
+
+  {{> google-analytics}}
+</body>
+</html>

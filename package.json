@@ -8,20 +8,19 @@
     "hydrogen": "pimbrouwers/hydrogen",
     "less": "2.7.2",
     "less-plugin-clean-css": "^1.5.1",
+    "minimatch": "^3.0.4",
     "ncp": "^2.0.0",
     "npm-run-all": "^4.1.2",
     "watch": "^1.0.2"
   },
   "scripts": {
-    "img": "ncp ./img ./public/img",
     "less": "lessc --clean-css ./css/style.less ./public/style.css",
     "pages": "node index.js",
     "server": "http-server ./public",
-    "watch:img": "watch \"npm run img\" ./img --ignoreDotFiles --ignoreUnreadable",
     "watch:less": "watch \"npm run less\" ./css --ignoreDotFiles --ignoreUnreadable",
     "watch:pages": "watch \"npm run pages\" ./src --ignoreDotFiles --ignoreUnreadable",
-    "watch:templates": "watch \"npm run pages\" ./templates --ignoreDotFiles --ignoreUnreadable",
     "watch": "run-p watch:*",
-    "start": "run-p watch server"
+    "develop": "run-p watch server",
+    "start": "run-s less pages"
   }
 }
