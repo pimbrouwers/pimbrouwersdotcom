@@ -18,7 +18,8 @@ function dittoSets(opt) {
 
     //iterate files and get matching keys (compared to original filename)
     files.forEach(function (file) {
-      setMatchers(file.path.rel).forEach(function (key) {
+      console.log(file.path);      
+      setMatchers(file.path.original).forEach(function (key) {
         ditto._metadata[key].push(file);
       });
     });
@@ -85,7 +86,7 @@ function dittoSetMatcher(keys, sets){
 
     Object.keys(setMatchers).forEach(function(key){
       let setMatcher = setMatchers[key];
-
+      
       if(setMatcher.isMatch(filePath)){
         keyMatches.push(key);
       }
