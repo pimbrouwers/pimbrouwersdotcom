@@ -13,16 +13,16 @@ ditto()
   })
   .source('./src/pages/')  
   .use(markdown())
-  .use(hbs({
-    partials: './src/templates/partials',
-    templates: './src/templates'
-  }))
   .use(sets({
     posts: {
       glob: '[0-9]*/**/*.md',
       sort: 'date',
       asc: false
     }
+  }))
+  .use(hbs({
+    partials: './src/templates/partials',
+    templates: './src/templates'
   }))
   .use(minify({
     collapseWhitespace: true,
