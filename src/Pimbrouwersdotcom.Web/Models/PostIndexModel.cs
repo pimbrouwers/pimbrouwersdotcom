@@ -11,7 +11,7 @@ namespace Pimbrouwersdotcom.Web.Models
   {
     public DateTime? dt { get; set; }
 
-    public OrderBy order { get; set; }
+    public string order { get; set; }
 
     public IEnumerable<Post> Posts { get; set; }
 

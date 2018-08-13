@@ -13,14 +13,14 @@ namespace Pimbrouwersdotcom.Web.Areas.Admin.Controllers
   [Authorize]
   public class PostTagController : Controller
   {
-    private readonly DbContext db;
+    private readonly PostRepository postRepository;
     private readonly ILogger logger;
 
     public PostTagController(
-      DbContext db,
+      PostRepository postRepository,
       ILogger<PostTagController> logger)
     {
-      this.db = db;
+      this.postRepository = postRepository;
       this.logger = logger;
     }
 
@@ -29,7 +29,7 @@ namespace Pimbrouwersdotcom.Web.Areas.Admin.Controllers
     {
       try
       {
-        await db.Post.DeleteTag(postId, tagId);
+        await postRepository.DeleteTag(postId, tagId);
       }
       catch (Exception ex)
       {

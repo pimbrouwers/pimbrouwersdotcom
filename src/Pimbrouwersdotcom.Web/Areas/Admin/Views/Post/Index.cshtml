@@ -1,7 +1,5 @@
 ﻿@model PostIndexModel
 
-<h1 class="h-title">Posts</h1>
-
 <section class="posts">
   @foreach (var post in Model.Posts)
   {
@@ -13,6 +11,10 @@
       <p><small>@post.Dt.ToShortDateString()</small></p>
 
       <p>@post.Tldr</p>
+
+      <div class="h-text-right">
+        <a href="#" class="h-btn">Edit &raquo;</a>
+      </div>
     </article>
   }
 </section>

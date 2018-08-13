@@ -1,4 +1,6 @@
-﻿using Pimbrouwersdotcom.Domain;
+﻿using Dapper.UnitOfWork;
+using LunchPail;
+using Pimbrouwersdotcom.Domain;
 using Sequel;
 using System;
 using System.Collections.Generic;
@@ -8,41 +10,37 @@ using System.Threading.Tasks;
 
 namespace Pimbrouwersdotcom.Data
 {
-  public class TagRepository : Repository<Tag>
+  public class TagRepository : AbstractRepository<Tag>
   {
-    public TagRepository(IDbConnectionFactory connectionFactory) : base(connectionFactory)
+    public TagRepository(
+      IDbContext dbContext,
+      ISqlMapper<Tag> sqlMapper)
+      : base(dbContext, sqlMapper)
     {
     }
 
-    public async Task<int> Create(Tag tag, IDbTransaction transaction = null, int? commandTimeout = null)
+    public async Task<int> Create(Tag tag, IDbTransaction transaction = null)
     {
-      var existing = await FindByLabel(tag.Label);
+      var existing = await FirstBy("Label", tag.Label);
 
-      return existing?.Id ?? await CreateEntity(tag, transaction, commandTimeout);
+      return existing?.Id ?? await CreateEntity(tag);
     }
 
-    public async Task<Tag> FindByLabel(string label, int? commandTimeout = null)
+    public async Task<Tag> FindByLabel(string label)
+    {
+      return await FirstLike("Label", $"{label}%");
+    }
+
+    public async Task<IEnumerable<Tag>> FindByPostId(int postId)
     {
       var sql = new SqlBuilder()
-        .Select("*")
-        .From(table.Name)
-        .Where("Label like @label")
-        .Limit(1)
-        .ToSql();
-
-      return await QueryFirstOrDefault<Tag>(sql, new { label = $"{label}%" }, commandTimeout: commandTimeout);
-    }
-
-    public async Task<IEnumerable<Tag>> FirstByPostId(int postId, int? commandTimeout = null)
-    {
-      var sql = new SqlBuilder()
-        .Select($"{table.Name}.*")
-        .From(table.Name)
-        .Join($"PostTag on PostTag.TagId = {table.Name}.Id")
+        .Select(sqlMapper.Fields)
+        .From(sqlMapper.Table)
+        .Join($"PostTag on PostTag.TagId = {sqlMapper.Table}.Id")
         .Where("PostTag.PostId = @postId")
         .ToSql();
 
-      return await Query(sql, new { postId }, commandTimeout: commandTimeout);
+      return await Query(sql, new { postId });
     }
   }
 }

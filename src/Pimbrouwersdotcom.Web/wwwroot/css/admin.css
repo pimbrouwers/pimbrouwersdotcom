@@ -1371,10 +1371,61 @@ div[class*="-r-"] {
     display: inline;
   }
 }
+body {
+  background: #fff;
+  color: #000d1a;
+  font-size: 1.5rem;
+}
+a {
+  color: #469d84;
+}
+a:hover {
+  color: #42957d;
+}
 .stage {
-  margin: 0 auto;
+  /*margin: 0 auto;*/
   max-width: 48rem;
   padding: 0 1rem;
+}
+.header {
+  margin: 1rem 0;
+  overflow: hidden;
+}
+.header .brand {
+  font-size: 1.5rem;
+  font-weight: 500;
+  margin-bottom: .3125rem;
+}
+.header .logo {
+  margin-bottom: 1rem;
+}
+.header .navigation a {
+  margin-right: .5rem;
+}
+.posts .post {
+  padding: 1rem 0;
+}
+.posts .post .meta {
+  font-size: 55%;
+}
+.posts .post h2 a {
+  text-decoration: none;
+}
+@media screen and (min-width: 48rem) {
+  /*.header {
+    .brand, .navigation {
+      float: left;
+      clear: left;
+    }
+
+    .logo {
+      float: right;
+      margin: 0;
+    }
+  }*/
+  .posts .post {
+    padding: 2rem 0;
+  }
 }
 /**
  * simplemde v1.11.2
@@ -2022,31 +2073,6 @@ span.CodeMirror-selectedtext {
 .CodeMirror .cm-spell-error:not(.cm-url):not(.cm-comment):not(.cm-tag):not(.cm-word) {
   background: rgba(255, 0, 0, 0.15);
 }
-body {
-  background: #ffffff;
-  color: #000d1a;
-}
-a {
-  color: #999999;
-  text-decoration: none;
-  transition: color ease-in 0.25s;
-}
-a:hover {
-  color: #666666;
-}
-.header {
-  margin: 1rem 0;
-  overflow: hidden;
-}
-.header .brand {
-  margin-bottom: .3125rem;
-}
-.header .logo {
-  margin-bottom: 1rem;
-}
-.header .navigation a {
-  margin-right: .5rem;
-}
 .h-form textarea {
   resize: vertical;
 }
@@ -2059,21 +2085,4 @@ a:hover {
 }
 .validation-summary-errors ul {
   margin: 0;
-}
-.posts .post {
-  padding: .25rem 0;
-}
-@media screen and (min-width: 48rem) {
-  .brand,
-  .navigation {
-    float: left;
-    clear: left;
-  }
-  .logo {
-    float: right;
-    margin: 0;
-  }
-  .posts .post {
-    padding: 1.25rem 0;
-  }
 }

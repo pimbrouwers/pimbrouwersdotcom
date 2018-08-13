@@ -1,11 +1,84 @@
 ﻿@import "../../node_modules/hydrogen-css/src/hydrogen.less";
 
-@white: #e0e0e0;
+@white: #fff;
 @black: #000d1a;
-@gold: #ffd700;
+@green: #469d84;
 
-.stage {  
-  margin: 0 auto;
+body {
+  background: @white;
+  color: @black;
+  font-size: 1.5rem;
+}
+
+a {
+  color: @green;
+  
+  &:hover {
+    color: darken(@green, 5%, 'relative');
+  }
+}
+
+.stage {
+  /*margin: 0 auto;*/
   max-width: 48rem;
   padding: 0 1rem;
+}
+
+//header
+.header {
+  margin: 1rem 0;
+  overflow: hidden;
+
+  .brand {
+    font-size: 1.5rem;
+    font-weight: 500;
+    margin-bottom: .3125rem;
+  }
+
+  .logo {
+    margin-bottom: 1rem;
+  }
+
+  .navigation {
+    a {
+      margin-right: .5rem;
+    }
+  }
+}
+
+//posts
+.posts {
+  .post {
+    padding: 1rem 0;
+
+    .meta {
+      font-size: 55%;
+    }
+
+    h2 {
+      a {
+        text-decoration: none;
+      }
+    }
+  }
+}
+
+@media screen and (min-width: 48rem) {
+  /*.header {
+    .brand, .navigation {
+      float: left;
+      clear: left;
+    }
+
+    .logo {
+      float: right;
+      margin: 0;
+    }
+  }*/
+
+  .posts {
+    .post {
+      padding: 2rem 0;
+    }
+  }
 }

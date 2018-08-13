@@ -1,11 +1,15 @@
 ﻿using FluentValidation;
 using FluentValidation.AspNetCore;
+using LunchPail;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Pimbrouwersdotcom.Data;
 using Pimbrouwersdotcom.Domain;
+using Pimbrouwersdotcom.Web.Services;
+using Sequel;
 using WebMarkupMin.AspNetCore2;
 
 namespace Pimbrouwersdotcom.Web
@@ -39,13 +43,33 @@ namespace Pimbrouwersdotcom.Web
           options.ImplicitlyValidateChildProperties = true;
         });
 
-      services.AddScoped<IDbConnectionFactory>(options =>
+      //context
+      services.AddTransient<IDbConnectionFactory>(_ =>
       {
-        return new SqliteConnectionFactory(Configuration.GetConnectionString("DefaultConnection"));
+        return new DbConnectionFactory(() =>
+        {
+          var conn = new SqliteConnection(Configuration.GetConnectionString("DefaultConnection"));
+          conn.Open();
+
+          return conn;
+        });
       });
-      services.AddScoped<DbContext>();
+      services.AddScoped<IDbContext, DbContext>();
+
+      //validators
       services.AddTransient<IValidator<Post>, PostValidator>();
       services.AddTransient<IValidator<Tag>, TagValidator>();
+
+      //entity maps
+      services.AddSingleton(typeof(ISqlMapper<>), typeof(SqlMapper<>));
+
+      //repositories
+      services.AddScoped<AccountRepository>();
+      services.AddScoped<PostRepository>();
+      services.AddScoped<TagRepository>();
+
+      //services
+      services.AddScoped<PostService>();
     }
 
     public void Configure(IApplicationBuilder app, IHostingEnvironment env)

@@ -1,41 +1,6 @@
 ﻿@import "_base.less";
 @import (less) "../../node_modules/simplemde/dist/simplemde.min.css";
 
-body {
-  background: @raw;
-  color: @black;
-}
-
-a {
-  color: @medium-rare;
-  text-decoration: none;
-  transition: color ease-in .25s;
-
-  &:hover {
-    color: @medium;
-  }
-}
-
-//header
-.header {
-  margin: 1rem 0;
-  overflow: hidden;
-
-  .brand {
-    margin-bottom: .3125rem;
-  }
-
-  .logo {
-    margin-bottom: 1rem;
-  }
-
-  .navigation {
-    a {
-      margin-right: .5rem;
-    }
-  }
-}
-
 //forms
 .h-form {
   textarea {
@@ -56,26 +21,3 @@ a {
   }
 }
 
-.posts {
-  .post {        
-    padding: .25rem 0;
-  }
-}
-
-@media screen and (min-width: 48rem) {
-  .brand, .navigation {
-    float: left;
-    clear: left;
-  }
-
-  .logo {
-    float: right;
-    margin: 0;
-  }
-
-  .posts {
-    .post {
-      padding: 1.25rem 0;
-    }
-  }
-}

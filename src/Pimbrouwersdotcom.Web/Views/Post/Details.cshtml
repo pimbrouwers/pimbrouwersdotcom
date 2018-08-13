@@ -1,0 +1,15 @@
+﻿@model Post
+
+<article class="Model">
+  <h2 class="h-margin-bottom-0">
+    <a asp-controller="Post" asp-action="Edit" asp-route-id="@Model.Id">@Model.Title</a>
+  </h2>
+
+  <p><small>@Model.Dt.ToShortDateString()</small></p>
+
+  @Model.Body
+
+  <div class="h-text-right">
+    <a href="#" class="h-btn">Edit &raquo;</a>
+  </div>
+</article>

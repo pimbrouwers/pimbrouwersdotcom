@@ -13,21 +13,24 @@ namespace Pimbrouwersdotcom.Web.Areas.Admin.Controllers
   [Authorize]
   public class PostController : Controller
   {
-    private readonly DbContext db;
+    private readonly PostRepository postRepository;
+    private readonly TagRepository tagRepository;
     private readonly ILogger logger;
 
     public PostController(
-      DbContext db,
+      PostRepository postRepository,
+      TagRepository tagRepository,
       ILogger<PostController> logger)
     {
-      this.db = db;
+      this.postRepository = postRepository;
+      this.tagRepository = tagRepository;
       this.logger = logger;
     }
 
     [HttpGet]
     public async Task<IActionResult> Index(PostIndexModel model)
     {
-      var posts = await db.Post.Page(model.dt, take: 10);
+      var posts = await postRepository.Page(model.dt, take: 10);
 
       if (posts == null)
       {
@@ -57,7 +60,7 @@ namespace Pimbrouwersdotcom.Web.Areas.Admin.Controllers
       {
         try
         {
-          int postId = await db.Post.Create(model.Post);
+          int postId = await postRepository.Create(model.Post);
 
           if (!string.IsNullOrWhiteSpace(model.Tags))
           {
@@ -65,9 +68,9 @@ namespace Pimbrouwersdotcom.Web.Areas.Admin.Controllers
 
             foreach (var tag in tags)
             {
-              int tagId = await db.Tag.Create(new Tag() { Label = tag.Trim() });
+              int tagId = await tagRepository.Create(new Tag() { Label = tag.Trim() });
 
-              await db.Post.AddTag(postId, tagId);
+              await postRepository.AddTag(postId, tagId);
             }
           }
 
@@ -86,14 +89,14 @@ namespace Pimbrouwersdotcom.Web.Areas.Admin.Controllers
     [HttpGet]
     public async Task<IActionResult> Edit(int id)
     {
-      var post = await db.Post.Read(id);
+      var post = await postRepository.Read(id);
 
       if (post == null)
       {
         return NotFound();
       }
 
-      post.Tags = await db.Tag.FirstByPostId(id);
+      post.Tags = await tagRepository.FindByPostId(id);
 
       return View(new PostEditModel()
       {
@@ -111,7 +114,7 @@ namespace Pimbrouwersdotcom.Web.Areas.Admin.Controllers
 
       try
       {
-        await db.Post.Update(model.Post);
+        await postRepository.Update(model.Post);
 
         if (!string.IsNullOrWhiteSpace(model.Tags))
         {
@@ -119,9 +122,9 @@ namespace Pimbrouwersdotcom.Web.Areas.Admin.Controllers
 
           foreach (var tag in tags)
           {
-            int tagId = await db.Tag.Create(new Tag() { Label = tag.Trim() });
+            int tagId = await tagRepository.Create(new Tag() { Label = tag.Trim() });
 
-            await db.Post.AddTag(id, tagId);
+            await postRepository.AddTag(id, tagId);
           }
         }
 

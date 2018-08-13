@@ -14,14 +14,14 @@ namespace Pimbrouwersdotcom.Web.Areas.Admin.Controllers
   [Area("Admin")]
   public class AccountController : Controller
   {
-    private readonly DbContext db;
+    private readonly AccountRepository accountRepository;
     private readonly ILogger logger;
 
     public AccountController(
-      DbContext db,
+      AccountRepository accountRepository,
       ILogger<PostController> logger)
     {
-      this.db = db;
+      this.accountRepository = accountRepository;
       this.logger = logger;
     }
 
@@ -46,7 +46,7 @@ namespace Pimbrouwersdotcom.Web.Areas.Admin.Controllers
 
       try
       {
-        var account = await db.Account.Login(model.Username, model.Password);
+        var account = await accountRepository.Login(model.Username, model.Password);
 
         if (account == null)
         {

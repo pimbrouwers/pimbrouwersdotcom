@@ -2,14 +2,24 @@
 
 @if (Model.Posts != null && Model.Posts.Any())
 {
-  foreach (var post in Model.Posts)
-  {
-  <article class="post">
-    <h1>@post.Title</h1>
-    
-    <blockquote class="h-blockquote">@post.Tldr</blockquote>
+  <section class="posts">
+    @foreach (var post in Model.Posts)
+    {
+    <article class="post">
+      <section class="meta">
+        <span class="published">@post.Dt.ToString("D")</span>
+        <span class="post-type">--</span>
+      </section>
+      <h2>
+        <a asp-controller="Post" asp-action="Edit" asp-route-id="@post.Id">@post.Title</a>        
+      </h2>
+      
+      <p>@post.Tldr</p>
 
-    <a asp-controller="Post" asp-action="Details" asp-route-id="@post.Id">Continue reading...</a>
-  </article>
-  }
+      <small>
+        <a href="#">continue &raquo;</a>
+      </small>
+    </article>
+    }
+  </section>
 }

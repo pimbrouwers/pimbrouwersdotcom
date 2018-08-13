@@ -1371,118 +1371,59 @@ div[class*="-r-"] {
     display: inline;
   }
 }
+body {
+  background: #fff;
+  color: #000d1a;
+  font-size: 1.5rem;
+}
+a {
+  color: #469d84;
+}
+a:hover {
+  color: #42957d;
+}
 .stage {
-  margin: 0 auto;
+  /*margin: 0 auto;*/
   max-width: 48rem;
   padding: 0 1rem;
 }
-body {
-  background: #000d1a;
-  color: #e0e0e0;
+.header {
+  margin: 1rem 0;
+  overflow: hidden;
 }
-.logo {
-  position: absolute;
-  left: 1.5rem;
-  top: 1.5rem;
+.header .brand {
+  font-size: 1.5rem;
+  font-weight: 500;
+  margin-bottom: .3125rem;
 }
-.title {
-  font-size: 3rem;
-  font-weight: 800;
+.header .logo {
+  margin-bottom: 1rem;
 }
-.subtitle,
-p,
-.project-title,
-.project-description {
-  font-size: 2.5rem;
-  font-weight: 100;
+.header .navigation a {
+  margin-right: .5rem;
 }
-p,
-.project-title,
-.project-description {
-  font-size: 2rem;
-  line-height: 1.6;
-  margin-bottom: 2rem;
+.posts .post {
+  padding: 1rem 0;
 }
-p,
-.keyword {
-  transition: color 0.3125s ease-in-out;
+.posts .post .meta {
+  font-size: 55%;
 }
-a {
-  color: #e0e0e0;
-  text-decoration: none;
-  transition: all 0.3125s ease-out;
-}
-a:hover {
-  color: #ffd700;
-}
-.background-black {
-  background: #000d1a;
-}
-.project-title {
-  text-align: center;
-}
-.project-title a {
-  background: #e0e0e0;
-  color: #000d1a;
-  display: inline-block;
-  padding: 0 .5rem;
+.posts .post h2 a {
   text-decoration: none;
 }
-.project-title a:hover {
-  background: #ffd700;
-}
-.project-title .project-description {
-  display: block;
-}
-.section {
-  opacity: 0;
-  animation: fadeIn 1s ease-out forwards;
-}
-.stage {
-  font-family: 'Mukta Mahee', sans-serif;
-}
-.stage.emphasize:hover p {
-  color: #636363;
-}
-.stage.emphasize:hover .keyword {
-  color: #e0e0e0;
-}
-.stage.emphasize:hover .keyword:hover {
-  color: #ffd700;
-}
-@media screen and (min-width: 64rem) {
-  .logo {
-    left: 3rem;
-    top: 3rem;
-  }
-  .title {
-    font-size: 6rem;
-  }
-  .subtitle {
-    font-size: 3.5rem;
-  }
-  p,
-  .project-title,
-  .project-description {
-    font-size: 2.5rem;
-    margin-bottom: 3rem;
-  }
-  .project-title {
-    text-align: left;
-  }
-  .project-title .project-description {
-    display: inline-block;
-    margin-left: 1rem;
-  }
-  .stage {
-    width: 48rem;
-  }
-}
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
+@media screen and (min-width: 48rem) {
+  /*.header {
+    .brand, .navigation {
+      float: left;
+      clear: left;
+    }
+
+    .logo {
+      float: right;
+      margin: 0;
+    }
+  }*/
+  .posts .post {
+    padding: 2rem 0;
   }
 }

@@ -1,4 +1,6 @@
-﻿using Pimbrouwersdotcom.Domain;
+﻿using Dapper.UnitOfWork;
+using LunchPail;
+using Pimbrouwersdotcom.Domain;
 using Sequel;
 using SimpleCrypto;
 using System;
@@ -8,22 +10,13 @@ using System.Threading.Tasks;
 
 namespace Pimbrouwersdotcom.Data
 {
-  public class AccountRepository : Repository<Account>
+  public class AccountRepository : AbstractRepository<Account>
   {
-    public AccountRepository(IDbConnectionFactory connectionFactory) : base(connectionFactory)
+    public AccountRepository(
+      IDbContext dbContext,
+      ISqlMapper<Account> sqlMapper)
+      : base(dbContext, sqlMapper)
     {
-    }
-
-    public async Task<Account> FindByUsername(string username, int? commandTimeout = null)
-    {
-      var sql = new SqlBuilder()
-        .Select("*")
-        .From(table.Name)
-        .Where("Username like @username")
-        .Limit(1)
-        .ToSql();
-
-      return await QueryFirstOrDefault<Account>(sql, new { username }, commandTimeout: commandTimeout);
     }
 
     public async Task<Account> Login(string username, string password)
@@ -51,6 +44,18 @@ namespace Pimbrouwersdotcom.Data
       }
 
       return potentialAccount;
+    }
+
+    private async Task<Account> FindByUsername(string username)
+    {
+      var sql = new SqlBuilder()
+        .Select(sqlMapper.Fields)
+        .From(sqlMapper.Table)
+        .Where("Username like @username")
+        .Limit(1)
+        .ToSql();
+
+      return await QueryFirstOrDefault(sql, new { username });
     }
   }
 }

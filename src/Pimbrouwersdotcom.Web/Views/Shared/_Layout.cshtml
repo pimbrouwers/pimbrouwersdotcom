@@ -14,17 +14,30 @@
   <link href="https://fonts.googleapis.com/css?family=Mukta+Mahee:200,800" rel="stylesheet">
   <link rel="stylesheet" href="~/css/style.min.css">
 </head>
-<body class="background-black">
-  <main role="main">
+<body>
+  <header class="header">
+    <div class="stage">
+      <div class="logo">
+        <img src="~/img/logo.png" />
+      </div>
+      <h1 class="brand">Pim Brouwers &ndash; <span class="h-font-weight-400">builder of digital things.</span></h1>
+      <nav class="navigation">
+        <a asp-controller="Post" asp-action="Index">About</a>
+        <a asp-controller="Post" asp-action="Create">Some Link</a>
+      </nav>
+    </div>
+  </header>
+
+  <main role="main" class="stage h-clear">
     @RenderBody()
   </main>
 
   <script>
     (function (i, s, o, g, r, a, m) {
-    i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
-      (i[r].q = i[r].q || []).push(arguments)
-    }, i[r].l = 1 * new Date(); a = s.createElement(o),
-      m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+      i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+        (i[r].q = i[r].q || []).push(arguments)
+      }, i[r].l = 1 * new Date(); a = s.createElement(o),
+        m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
     })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
     ga('create', 'UA-74210946-2', 'auto');
     ga('send', 'pageview');
