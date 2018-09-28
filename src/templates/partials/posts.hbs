@@ -1,0 +1,11 @@
+<h2>Posts</h2>
+    <ul class="post-list">
+      {{#each metadata.posts}}
+        <li>
+          <div class="post-date">{{content.date}}</div>
+          <div class="post-link">
+            <a href="{{path.rel}}">{{content.title}}</a>
+          </div>
+        </li>
+      {{/each}}
+    </ul>
