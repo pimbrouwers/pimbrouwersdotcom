@@ -1,15 +1,16 @@
 {
   "dependencies": {
-    "ditt0": "pimbrouwers/ditto",
-    "ditt0-hbs": "pimbrouwers/ditto-hbs",
-    "ditt0-markdown": "pimbrouwers/ditto-markdown",
+    "ditt0": "file:../ditto",
+    "ditt0-hbs": "file:../ditto-hbs",
+    "ditt0-markdown": "file:../ditto-markdown",
     "html-minifier": "^3.5.9",
     "http-server": "^0.11.1",
-    "hydrogen": "pimbrouwers/hydrogen",
+    "hydrogen-css": "github:pimbrouwers/hydrogen",
     "less": "2.7.2",
     "less-plugin-clean-css": "^1.5.1",
     "minimatch": "^3.0.4",
     "ncp": "^2.0.0",
+    "npm": "^6.3.0",
     "npm-run-all": "^4.1.2",
     "watch": "^1.0.2"
   },
