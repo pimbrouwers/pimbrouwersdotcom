@@ -3,6 +3,7 @@ const
   markdown = require('ditt0-markdown'),
   hbs = require('ditt0-hbs'),
   minify = require('./minifier'),
+  permalinks = require('./permalinks'),
   sets = require('./sets');
 
 ditto()
@@ -13,13 +14,14 @@ ditto()
   })
   .source('./src/pages/')  
   .use(markdown())
-  .use(sets({
-    posts: {
-      glob: '[0-9]*/**/*.md',
-      sort: 'date',
-      asc: false
-    }
-  }))
+  // .use(sets({
+  //   posts: {
+  //     glob: '[0-9]*/**/*.md',
+  //     sort: 'date',
+  //     asc: false
+  //   }
+  // }))
+  // .use(permalinks())
   .use(hbs({
     partials: './src/templates/partials',
     templates: './src/templates'
