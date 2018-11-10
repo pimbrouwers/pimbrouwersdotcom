@@ -18,6 +18,6 @@ When I'm not working at the [NHLPA][nhlpa], I [ramble][twitter] on Twitter, [wri
 [photography]: https://500px.com/mathijspim
 [open-source]: https://github.com/pimbrouwers
 
-> Don't do two things half-ass.<br />
-Do one thing full-ass.<br />
+> Never half ass two things.<br />
+Whole ass one thing.<br />
 &ndash; Ron Swanson
