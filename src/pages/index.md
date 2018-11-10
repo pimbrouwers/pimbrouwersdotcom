@@ -3,9 +3,10 @@ title: The ramblings of Pim Brouwers
 description: Chuck Taylor-wearing, chair-raving, programming robot. Making databases harder, better, faster, stronger.
 ---
 
-# Hi, I'm Pim.
+# Hi, I'm Pim. 
+## A builder of digital things.
 
-A polyglot engineer with an ethos rooted in simplicity. I'm a problem solver, serial learner, performance junkie, and full-time builder of digital things. Specializing high performance systems, daemons & task automations, information architecture and application integrations. With a particular interest in Go. Captivated by its powerful simplicity and how productive it allows me to be.
+Rooted in an ethos of simplicity, I'm a passionate problem solver, serial learner and team player. A full stack developer by trade, specializing in high performance software, data architecture, ETL & ELT scenarios and cloud architecture. Possessing a particular penchant for C#, SQL Server & .NET Core with a budding interest in Go & Mithril.
 
 It is my passion in life to acquire knowledge by doing, a process which I’ve come to learn can be summarized as: do-fail-repeat. 
 
