@@ -5,7 +5,13 @@ description: Chuck Taylor-wearing, chair-raving, programming robot.
 
 # Hi, I'm Pim.
 
-A Chuck Taylor-wearing, chair-raving, programming robot. Specializing in high-performance systems, data-driven UI’s, daemons, database design & optimization, ETL/ELT scenarios and information architecture. With a budding interest in Go. 
+Rooted in an ethos of simplicity, I'm a lifelong problem solver, serial learner and builder of digital things. Specializing in database design & tuning, ELT scenarios, microservice architecture, high performance web software. With a budding passion for functional programming using F#. 
+
+My daily tech stack includes: SQL Server, C#, F#, JavaScript, HTML and CSS. 
+
+DevOps tools I use: GitHub, TravisCI, Azure Teams and Microsoft Azure.
+
+I also have professional experience working with: PHP, MySQL, column-oriented databases, PowerShell, Shell and Java.
 
 When I'm not [working][nhlpa] at the NHLPA, I [ramble][twitter] on Twitter, [write][devto] occassionally, (try to) [help][help] other developers write better code, [dabble][photography] in photography, and [contribute][open-source] to open-source.
 

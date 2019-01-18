@@ -13,13 +13,13 @@ ditto()
   })
   .source('./src/pages/')  
   .use(markdown())
-  .use(sets({
-    posts: {
-      glob: '[0-9]*/**/*.md',
-      sort: 'date',
-      asc: false
-    }
-  }))
+  // .use(sets({
+  //   posts: {
+  //     glob: '[0-9]*/**/*.md',
+  //     sort: 'date',
+  //     asc: false
+  //   }
+  // }))
   .use(hbs({
     partials: './src/templates/partials',
     templates: './src/templates'
