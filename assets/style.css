@@ -10,7 +10,7 @@ a:hover { color: #b845fc; }
 
 ul { padding-left: 1.25rem; }
 
-pre { white-space: pre; font-size: .875rem; margin: 1rem 0; padding: 1rem; color: #eff0f9; background: #29292e; }
+pre { overflow-x: auto; overflow-wrap: normal; white-space: pre; font-size: .875rem; margin: 1rem 0; padding: 1rem; color: #eff0f9; background: #29292e; }
 code { background-color: #eee; font-family: Courier New,Courier,Lucida Sans Typewriter,Lucida Typewriter,monospace;  }
 pre > code { background-color: inherit; }
 
