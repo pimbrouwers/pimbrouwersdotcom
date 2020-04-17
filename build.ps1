@@ -57,10 +57,15 @@ $bin = Join-Path $wd "bin"
 #
 # Output
 if(Test-Path $bin) {
-	Remove-Item $bin -Recurse -Force
+	Get-ChildItem $bin -Recurse | ForEach-Object {
+		if($_.Name -ne "CNAME") {
+			Remove-Item $_.FullName -Recurse
+		}
+	}	
 } 
-
-New-Item $bin -ItemType Directory
+else {
+	New-Item $bin -ItemType Directory
+}
 
 #
 # Assets
