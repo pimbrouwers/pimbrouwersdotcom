@@ -48,39 +48,41 @@ function Invoke-Template {
 
 #
 # Globals
-$wd = $PSScriptRoot
-$etc = Join-Path $wd ".etc"
-$pages = Join-Path $wd "pages"
-$assets = Join-Path $wd "assets"
-$bin = Join-Path $wd "bin"
+$workDir = $PSScriptRoot
+$etcDir = Join-Path $workDir ".etc"
+$binDir = Join-Path $workDir "bin"
 
 #
 # Output
-if(Test-Path $bin) {
-	Get-ChildItem $bin -Recurse | ForEach-Object {
+if(Test-Path $binDir) {
+	Get-ChildItem $binDir -Recurse | ForEach-Object {
 		if($_.Name -ne "CNAME") {
 			Remove-Item $_.FullName -Recurse
 		}
 	}	
 } 
 else {
-	New-Item $bin -ItemType Directory
+	New-Item $binDir -ItemType Directory
 }
 
 #
 # Assets
-Copy-Item -Path $assets -Destination $bin -Recurse -Container
+Join-Path $workDir "assets" |
+Copy-Item -Destination $binDir -Recurse -Container
 
 #
 # Template literals
-$templateDefault = Get-Content -Path (Join-Path $etc "template.html") -Raw | Out-String
+$templateDefault = Get-Content -Path (Join-Path $etcDir "template.html") -Raw | Out-String
 
-Get-ChildItem $pages -Recurse -Filter *.html | ForEach-Object {			
+#
+# Make pages
+$pagesDir = Join-Path $workDir "pages"
+Get-ChildItem $pagesDir -Recurse -Filter *.html | ForEach-Object {			
 	$processingFrontMatter = $false
 	
 	Invoke-Template {		
 		[string]$body
-		
+				
 		$body = [System.IO.File]::ReadLines($_.FullName) | ForEach-Object {
 			if($_ -eq "---") {			
 				if($processingFrontMatter -eq $true) {				
@@ -105,8 +107,8 @@ Get-ChildItem $pages -Recurse -Filter *.html | ForEach-Object {
 		
 		$htmlFilename = $_.Name
 
-		if($_.Name -ne "index.html") {					
-			if ($date) {
+		if($_.Name -ne "index.html") {
+			if ($date) { # comes from front-matter
 				$dirName = Join-Path (Join-Path "blog" $date) $_.Name.Replace(".html", "")				
 			}		
 			else {
@@ -114,11 +116,11 @@ Get-ChildItem $pages -Recurse -Filter *.html | ForEach-Object {
 			}
 
 			$htmlFilename = Join-Path $dirName "/index.html"							
-			New-Item -Path (Join-Path $bin $dirName) -ItemType Directory
+			New-Item -Path (Join-Path $binDir $dirName) -ItemType Directory
 		}
 		
 		$body = Render-Template $body
 		
-		Render-Template $templateDefault | Out-File (Join-Path $bin $htmlFilename)
+		Render-Template $templateDefault | Out-File (Join-Path $binDir $htmlFilename)
 	}
 }
