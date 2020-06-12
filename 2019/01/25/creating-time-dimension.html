@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width,initial-scale=1" name="viewport">
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+  <title>Creating Time Dimension with Second Granularity | Pim Brouwers</title> 
+  <link href="/style.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+  <header>    
+    <p><a href="/">&laquo; Go back</a></p>
+    <h1>Creating Time Dimension with Second Granularity</h1>        
+    <p class="big">Time dimensions are key in certain data mart/warehouse applications. They can prevent your date dimension from growing out of control by reusing the time portion.</p>
+
+  </header>
+
+  <hr/>
+
+  <p>The specific columns you require are just that, specific to you. But below is a dimension I wrote today for a statistics project which tracks even down to the granularity of a second.</p>
+
+  <blockquote>Note: The following example is written in T-SQL</blockquote>
+
+  <h2>Schema</h2>
+
+  <p>Nothing crazy going on here, but in general these are the columns I like to track for ease of reporting. You can argue that an auto-incremented <code>int</code> value is better as primary key, and you'd likely have a valid case. But an equally compelling argument could be made in the other direction. Just think, will <code>00:00:01</code> (representing the first second of the time series) ever represent anything other than what it currently represents? Probably not.</p>
+
+  <p>The point here is not to put on the blinders and automatically create an auto-incremented <code>int</code> surrogate key for all your tables. <strong>Think about your data.</strong></p>
+
+  <code><pre>CREATE TABLE [dbo].[DimTime] (
+    PRIMARY KEY ([TimeKey])
+  , [TimeKey]        TIME     NOT NULL
+  , [Hour12]         TINYINT  NOT NULL
+  , [Hour24]         TINYINT  NOT NULL
+  , [MinuteOfHour]   TINYINT  NOT NULL
+  , [SecondOfMinute] TINYINT  NOT NULL
+  , [ElapsedMinutes] SMALLINT NOT NULL
+  , [ElapsedSeconds] INT      NOT NULL
+  , [AMPM]           CHAR(2)  NOT NULL
+  , [HHMMSS]         CHAR(8)  NOT NULL);</pre></code>
+  
+
+  <h2>Population</h2>
+
+  <p>To populate, we first define our limits. Next, we use the <code>sys.all_objects</code> view <code>cross join</code>'d onto itself acting as our row generator, limiting it to the number of seconds difference between our <code>@StartTime</code> and <code>@EndTime</code>. What I like about this approach is that we ultimately perform one large insert versus 86400 individual inserts. Next, we extract some useful information to make our final calculations more succinct. And finally, we insert the records.</p>
+
+
+  <code><pre>DECLARE @StartTime TIME = CONVERT(TIME, '00:00:00');
+DECLARE @EndTime TIME = CONVERT(TIME, '23:59:59');
+
+WITH
+[timestamps] AS
+   (SELECT  [ts].[TimeKey]
+          , DATEPART(HOUR, [ts].[TimeKey]) + 1 AS [Hour24]
+          , DATEPART(MINUTE, [ts].[TimeKey]) AS [MinuteOfHour]
+          , DATEPART(SECOND, [ts].[TimeKey]) AS [SecondOfMinute]
+      FROM  (SELECT DATEADD(SECOND, [x].[rn] - 1, @StartTime) AS [TimeKey]
+               FROM (SELECT TOP (DATEDIFF(SECOND, @StartTime, @EndTime))
+                            ROW_NUMBER() OVER (ORDER BY [s1].[object_id]) AS [rn]
+                       FROM [sys].[all_objects] AS [s1]
+                            CROSS JOIN [sys].[all_objects] AS [s2]
+                      ORDER BY [s1].[object_id]) AS [x]
+             UNION
+             SELECT @EndTime) AS [ts] )
+INSERT INTO [dbo].[DimTime] ([TimeKey], [Hour12], [Hour24], [MinuteOfHour], [SecondOfMinute], [ElapsedMinutes], [ElapsedSeconds], [AMPM], [HHMMSS])
+SELECT  [ts].[TimeKey]
+      , CASE
+        WHEN [ts].[Hour24] &gt; 12
+             AND [ts].[Hour24] % 12 &lt;&gt; 0 THEN [ts].[Hour24] % 12
+        WHEN [ts].[Hour24] % 12 = 0 THEN 12
+        ELSE [ts].[Hour24]
+        END AS [Hour12]
+      , [ts].[Hour24]
+      , [ts].[MinuteOfHour]
+      , [ts].[SecondOfMinute]
+      , ([ts].[Hour24] - 1) * 60 + [ts].[MinuteOfHour] AS [ElapsedMinutes]
+      , (([ts].[Hour24] - 1) * 60 + [ts].[MinuteOfHour]) * 60 + [ts].[SecondOfMinute] AS [ElapsedSeconds]
+      , CASE
+        WHEN [ts].[Hour24] &gt; 12 THEN 'PM'
+        ELSE 'AM'
+        END AS [AMPM]
+      , CONVERT(CHAR(8), [ts].[TimeKey], 108) AS [HHMMSS]
+  FROM  [timestamps] AS [ts]
+ ORDER BY [ts].[TimeKey];</code></pre>
+
+  <hr/>
+
+  <footer>
+    <div>Pim Brouwers</div>
+    <div>Senior Software Architect @ <a href="nhlpa.com" target="_blank">NHLPA</a></div>
+    <div>
+      <a href="twitter.com/pim_brouwers" target="_blank">Twitter</a>
+      <a href="github.com/pimbrouwers" target="_blank">GitHub</a>
+    </div>
+  </footer>
+</body>
+
+</html>
