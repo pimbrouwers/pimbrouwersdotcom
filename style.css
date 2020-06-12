@@ -6,6 +6,8 @@ p > a:hover { color: #B845FC; }
 blockquote { margin-left: 0; margin-right: 0; padding: 1em; border-left: 4px solid #ddd; background: #eee; }
 
 .big { font-size: 125%; }
+.muted { opacity: .5; }
+.monospace { font-family: monospace; }
 
 pre { overflow-x: auto; overflow-wrap: normal; white-space: pre; font-size: .875rem; margin: 1rem 0; padding: 1rem; color: #eff0f9; background: #29292e; }
 code { vertical-align: middle; font-family: monospace; background-color: #eee; }
