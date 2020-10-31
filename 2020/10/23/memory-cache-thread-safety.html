@@ -9,31 +9,31 @@
 </head>
 
 <body>
-  <header>    
-    <p><a href="/">&laquo; Go home</a></p>
+  <p><a href="/">&laquo; Go home</a></p>
+
+  <article>    
     <h1>Is MemoryCache Thread Safe?</h1>        
     <p class="big">Fundamentally, <code>MemoryCache</code> is indeed thread safe. However, the thread safety of the data stored within it is entirely up to your using's of it.</p>
-  </header>
+  
+    <hr/>
 
-  <hr/>
+    <small class="muted monospace">OCTOBER 23, 2020</small>
 
-  <small class="muted monospace">OCTOBER 23, 2020</small>
+    <p>To quote <a href="https://stackoverflow.com/users/65358/reed-copsey" target="_blank">Reed Copsey</a> from his awesome <a href="http://reedcopsey.com/2011/01/16/concurrentdictionarytkeytvalue-used-with-lazyt/" target="_blank">post</a> regarding concurrency and the <code>ConcurrentDictionary&lt;TKey, TValue&gt;</code> type which is also applicable here:</p>
 
-  <p>To quote <a href="https://stackoverflow.com/users/65358/reed-copsey" target="_blank">Reed Copsey</a> from his awesome <a href="http://reedcopsey.com/2011/01/16/concurrentdictionarytkeytvalue-used-with-lazyt/" target="_blank">post</a> regarding concurrency and the <code>ConcurrentDictionary&lt;TKey, TValue&gt;</code> type which is also applicable here:</p>
+    <blockquote>If two threads call this [GetOrAdd] simultaneously, two instances of TValue can easily be constructed.</blockquote>
 
-  <blockquote>If two threads call this [GetOrAdd] simultaneously, two instances of TValue can easily be constructed.</blockquote>
+    <p>You can imagine that this would be especially bad if <code>TValue</code> is expensive to construct.</p>
 
-  <p>You can imagine that this would be especially bad if <code>TValue</code> is expensive to construct.</p>
+    <p>To work your way around this, you can leverage <code>Lazy&lt;T&gt;</code> very easily, which coincidentally is very cheap to construct. Doing this ensures if we get into a multithreaded situation, that we're only building multiple instances of <code>Lazy&lt;T&gt;</code> (which is cheap).</p>
 
-  <p>To work your way around this, you can leverage <code>Lazy&lt;T&gt;</code> very easily, which coincidentally is very cheap to construct. Doing this ensures if we get into a multithreaded situation, that we're only building multiple instances of <code>Lazy&lt;T&gt;</code> (which is cheap).</p>
+    <p><code>GetOrAdd()</code> (<code>GetOrCreate()</code> in the case of MemoryCache) will return the same, singular <code>Lazy&lt;T&gt;</code> to all threads, the "extra" instances of <code>Lazy&lt;T&gt;</code> are simply thrown away.</p>
 
-  <p><code>GetOrAdd()</code> (<code>GetOrCreate()</code> in the case of MemoryCache) will return the same, singular <code>Lazy&lt;T&gt;</code> to all threads, the "extra" instances of <code>Lazy&lt;T&gt;</code> are simply thrown away.</p>
+    <p>Since the <code>Lazy&lt;T&gt;</code> doesn't do anything until <code>.Value</code> is called, only one instance of the object is ever constructed.</p>
 
-  <p>Since the <code>Lazy&lt;T&gt;</code> doesn't do anything until <code>.Value</code> is called, only one instance of the object is ever constructed.</p>
+    <p>Now for some code! Below is an extension method for <code>IMemoryCache</code> which implements the above. It arbitrarily is setting <code>SlidingExpiration</code> based on a int seconds method param. But this is entirely customizable based on your needs.</p>
 
-  <p>Now for some code! Below is an extension method for <code>IMemoryCache</code> which implements the above. It arbitrarily is setting <code>SlidingExpiration</code> based on a int seconds method param. But this is entirely customizable based on your needs.</p>
-
-  <code><pre>public static T GetOrAdd<T>(this IMemoryCache cache, string key, int seconds, Func<T> factory)
+    <code><pre>public static T GetOrAdd<T>(this IMemoryCache cache, string key, int seconds, Func<T> factory)
 {
     return cache.GetOrCreate<T>(key, entry => new Lazy<T>(() =>
     {
@@ -46,9 +46,9 @@
 IMemoryCache cache;
 var result = cache.GetOrAdd("someKey", 60, () => new object());</pre></code>
 
-  <p>To perform this all asynchronously, I recommend using Stephen Toub's excellent <code>AsyncLazy&lt;T&gt;</code> implementation found in his <a href="https://social.msdn.microsoft.com/profile/Stephen+Toub+-+MSFT" target="_blank">article</a> on MSDN. Which combines the builtin lazy initializer <code>Lazy&lt;T&gt;</code> with the promise <code>Task&lt;T&gt;</code>:</p>
+    <p>To perform this all asynchronously, I recommend using Stephen Toub's excellent <code>AsyncLazy&lt;T&gt;</code> implementation found in his <a href="https://social.msdn.microsoft.com/profile/Stephen+Toub+-+MSFT" target="_blank">article</a> on MSDN. Which combines the builtin lazy initializer <code>Lazy&lt;T&gt;</code> with the promise <code>Task&lt;T&gt;</code>:</p>
 
-  <code><pre>public class AsyncLazy<T> : Lazy<Task<T>>
+    <code><pre>public class AsyncLazy<T> : Lazy<Task<T>>
 {
     public AsyncLazy(Func<T> valueFactory) :
         base(() => Task.Factory.StartNew(valueFactory))
@@ -72,6 +72,7 @@ public static Task<T> GetOrAddAsync<T>(this IMemoryCache cache, string key, int 
 // usage:
 IMemoryCache cache;
 var result = await cache.GetOrAddAsync("someKey", 60, async () => new object());</pre></code>
+  </article>
 
   <hr/>
 
