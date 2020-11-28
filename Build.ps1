@@ -11,7 +11,7 @@ function Invoke-Template {
 	& $scriptBlock
 }
 
-$outputDir = "www"
+$outputDir = "docs"
 $template = Get-Content -Path .\template.html -Raw | Out-String
 
 if(Test-Path -Path $outputDir) {
