@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- /head --> 
+<head>
+<meta charset="utf-8">
+<meta content="width=device-width,initial-scale=1" name="viewport">
+<meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+<title>SQL |> F#: Simple & powerful data access for .NET</title> 
+
+<!-- /head/style -->
+<style>
+html { max-width: 45rem; margin: 0 auto; font-size: 16px; font-family: sans-serif; line-height: 1.4; color: #333; }
+body { padding: 0 .5em; }
+hr { max-width: 80px; height: 0; margin: 2rem 0; border-top: 1px dotted #ccc; }
+h3 { font-weight: 400; }
+a { color: inherit; }
+p, p > a, p > a:visited { color: inherit; }
+p > a:hover { color: #B845FC; }
+blockquote { margin-left: 0; margin-right: 0; padding: 1em; border-left: 4px solid #ddd; background: #eee; }
+
+.big { font-size: 125%; }
+.muted { opacity: .5; }
+.monospace { font-family: monospace; }
+
+pre { overflow-x: auto; overflow-wrap: normal; white-space: pre; font-size: .875rem; margin: 1rem 0; padding: 1rem; color: #eff0f9; background: #29292e; }
+code { vertical-align: middle; font-family: monospace; background-color: #eee; }
+pre > code { background-color: inherit; }
+p > code { padding: 0 .125em; }
+
+@media screen and (min-width: 480px) {  
+  body { padding: 0; font-size: 1.25em; }
+}
+</style>
+</head>
+
+<!-- /body -->
+<body>
+<!-- /body/post -->
+<p><a href="/">« Go home</a></p>
+<h1 id="sql-f-simple-powerful-data-access-for.net">SQL |&gt; F#: Simple &amp; powerful data access for .NET</h1>
+<p>In the spirit of starting small and finishing big, we'll look at the simple task of working with a relational database.</p>
+<hr />
+<p><small class="muted monospace">FEBRUARY 28, 2020</small></p>
+<p>Rather than immediately reaching for one of the libraries like SqlProvider (which is an excellent tool, but not the point here), we'll stick to just basic ADO.NET.</p>
+<p>To achieve a very useful module you actually need very little code, which is one of the major benefits of F# in my opinion. For our simple scope, we know we need:</p>
+<ul>
+<li>A way to create connections (i.e. connection factory)`</li>
+</ul>
+<pre><code>let newConnection connectionString =
+    let conn = new SqlConnection(connectionString)
+    conn.Open()
+    conn
+</code></pre>
+<ul>
+<li>A way to execute statements (i.e. INSERT, UPDATE)`</li>
+</ul>
+<pre><code>let exec sql param conn =
+    let cmd = newCommand sql param conn
+    cmd.ExecuteNonQuery()
+</code></pre>
+<ul>
+<li>A way to query records (i.e. SELECT)`</li>
+</ul>
+<pre><code>let query sql param map conn =
+    let cmd = newCommand sql param conn
+    use rd = cmd.ExecuteReader()
+    [ while rd.Read() do yield map rd ]
+</code></pre>
+<p>To support the above syntax we'll create ourselves a module called SQL, import <code>System.Data</code> and for this example we'll use <code>System.Data.SqlClient</code> (though you could sub this with any vendor). Once we've gotten our dependencies imported, creating wrapper for ADO becomes trivial.</p>
+<pre><code>module SQL =
+open System.Data
+open System.Data.SqlClient
+
+let newConnection (connectionString : string) =
+    let conn = new SqlConnection(connectionString)
+    conn.Open()
+    conn
+
+let createParameter (cmd: SqlCommand) (name : string, value : obj) =
+    let p = cmd.CreateParameter()
+    p.ParameterName &lt;- name
+    p.Value &lt;- value
+    p
+
+let addParameter (cmd: SqlCommand) (p : SqlParameter) = 
+    cmd.Parameters.Add(p) |&gt; ignore
+
+let newCommand 
+    (sql : string) 
+    (parameters : seq&lt;string * obj&gt;)
+    (conn : IDbConnection) =        
+    let cmd = new SqlCommand(connection = conn, cmdText = sql)
+    cmd.CommandType &lt;- CommandType.Text        
+    parameters 
+    |&gt; Seq.iter (fun p -&gt; p |&gt; createParam cmd |&gt; addParam cmd)
+    cmd 
+
+let exec 
+    (sql : string) 
+    (parameters : seq&lt;string * obj&gt;)
+    (conn : IDbConnection) =        
+    let cmd = newCommand sql param conn
+    cmd.ExecuteNonQuery()
+
+let query 
+    (sql : string) 
+    (parameters : seq&lt;string * obj&gt;) 
+    (map : IDataReader -&gt; 'a) 
+    (conn : IDbConnection) =        
+    let cmd = newCommand sql param conn
+    use rd = cmd.ExecuteReader()
+    [ while rd.Read() do yield map rd ]&lt;/pre&gt;
+</code></pre>
+<blockquote>
+<p>Notice that there is mutation happening here (anywhere you see <code>&lt;-</code>). But that's okay because we've tucked it away and sand boxed it with a function wrapper.</p>
+</blockquote>
+<p>So in about 40 lines of code we've created ourselves a small, well-understood and self documenting solution that can help us fully achieve the goal of interacting with a database. Pretty sweet!</p>
+<p>If you find this approach helpful, feel free to checkout my open-source project <a href="https://github.com/pimbrouwers/Donald">Donald</a>, a well-tested F# interface for ADO.NET which is vendor agnostic.</p>
+
+
+<!-- /body/footer -->
+<hr>
+<footer>
+  <p>
+    <div>Pim Brouwers</div>      
+    <div>
+      <a href="//twitter.com/pim_brouwers" target="_blank">Twitter</a>
+      <a href="//github.com/pimbrouwers" target="_blank">GitHub</a>
+    </div>
+  </p>
+</footer>
+
+</body>
+</html>
+
+

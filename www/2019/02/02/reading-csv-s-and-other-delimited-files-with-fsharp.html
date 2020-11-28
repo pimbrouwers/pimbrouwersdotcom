@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- /head --> 
+<head>
+<meta charset="utf-8">
+<meta content="width=device-width,initial-scale=1" name="viewport">
+<meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+<title>Reading CSV's and other delimited files with F#</title> 
+
+<!-- /head/style -->
+<style>
+html { max-width: 45rem; margin: 0 auto; font-size: 16px; font-family: sans-serif; line-height: 1.4; color: #333; }
+body { padding: 0 .5em; }
+hr { max-width: 80px; height: 0; margin: 2rem 0; border-top: 1px dotted #ccc; }
+h3 { font-weight: 400; }
+a { color: inherit; }
+p, p > a, p > a:visited { color: inherit; }
+p > a:hover { color: #B845FC; }
+blockquote { margin-left: 0; margin-right: 0; padding: 1em; border-left: 4px solid #ddd; background: #eee; }
+
+.big { font-size: 125%; }
+.muted { opacity: .5; }
+.monospace { font-family: monospace; }
+
+pre { overflow-x: auto; overflow-wrap: normal; white-space: pre; font-size: .875rem; margin: 1rem 0; padding: 1rem; color: #eff0f9; background: #29292e; }
+code { vertical-align: middle; font-family: monospace; background-color: #eee; }
+pre > code { background-color: inherit; }
+p > code { padding: 0 .125em; }
+
+@media screen and (min-width: 480px) {  
+  body { padding: 0; font-size: 1.25em; }
+}
+</style>
+</head>
+
+<!-- /body -->
+<body>
+<!-- /body/post -->
+<p><a href="/">« Go home</a></p>
+<h1 id="reading-csvs-and-other-delimited-files-with-f">Reading CSV's and other delimited files with F#</h1>
+<p>F# really excels in automated code generation, <a href="https://docs.microsoft.com/en-us/dotnet/fsharp/tutorials/type-providers/">type providers</a> are a perfect example of this. These type providers will automatically generate types for your data based on sampling, which is provided inline, from a <code>StreamReader</code> or sometimes via URL.</p>
+<hr />
+<p><small class="muted monospace">FEBRUARY 2, 2019</small></p>
+<p>If you're exploring a new data source, like an API, these are wickedly sexy and effective tools. However, in production they can become a bit of pain to use and manage.</p>
+<p>F# is absolutely loaded with what I'll call &quot;language tools&quot;, and providers are an excellent example of this. Which makes it easy to forget that you will at times need to go lower and in most situations I'd suggest you'll either want to be there or inevitably wind up there.</p>
+<p>If you're working in .NET and not using <a href="https://joshclose.github.io/CsvHelper/">CsvHelper</a> to read/write delimited files, you're missing out. It's an incredible tool.</p>
+<p>Using imperative libraries in F# typically means writing small adapter functions. Below is a snippet from a module I frequently use to parse delimited files in my F# projects, including a sample of how to partially apply the base <code>read</code> function. <code>read</code> is configurable at runtime and accepts a file path &amp; record mapper function.</p>
+<pre><code>module Csv =    
+open CsvHelper 
+open System.IO
+
+let read config path mapCsv =
+    seq {
+        use reader = new StreamReader(path = path)
+        use csv = new CsvReader(reader, configuration = config)         
+
+        csv.Read() |&gt; ignore
+        csv.ReadHeader() |&gt; ignore
+
+        while csv.Read() do
+            yield mapCsv csv          
+    }
+
+let readTabDelimited path mapCsv = 
+    let config = Configuration()
+    config.Delimiter &lt;- &quot;\t&quot;
+    read config path mapCsv&lt;/pre&gt;
+</code></pre>
+<p>To use simply provide a working file path and function with a <code>CsvReader -&gt; 'a</code> signature.</p>
+<pre><code>type MyRecord = { FullName : string }
+
+Csv.readTabDelimited 
+      &quot;./some_tab_delimited_file.txt&quot; 
+      (fun csv -&gt; { FullName = csv.GetField(&quot;FULL_NAME&quot;) })  &lt;/pre&gt;
+</code></pre>
+<p>And that's it! You might be asking yourself why not use <code>csv.GetRecords&lt;MyRecord&gt;</code>? I personally like to avoid the <code>[&lt;CliMutable&gt;]</code> attribute when I can because that's one of the reasons I'm using F# in the first place. Creating new record types in F# is so terse that I am PERFECTLY happy to write my own mapping code, especially for tasks like consuming <code>IDbReader</code>'s.</p>
+<p>It's important to remember that with very little massaging F# can be great at inteorping with imperative libraries.</p>
+
+
+<!-- /body/footer -->
+<hr>
+<footer>
+  <p>
+    <div>Pim Brouwers</div>      
+    <div>
+      <a href="//twitter.com/pim_brouwers" target="_blank">Twitter</a>
+      <a href="//github.com/pimbrouwers" target="_blank">GitHub</a>
+    </div>
+  </p>
+</footer>
+
+</body>
+</html>
+
+
