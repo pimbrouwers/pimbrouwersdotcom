@@ -75,6 +75,7 @@ Write-Verbose ($postMeta | Out-String)
 #
 # 404
 Invoke-Template {  
+  $title = "404 - Not Found | Pim Brouwers"
   $markdown = Get-Content 404.md -Raw | ConvertFrom-Markdown    
 
   $postHtml = $markdown | Select-Object -ExpandProperty Html  
@@ -96,6 +97,7 @@ $postLinkTemplate = '
 '
 
 Invoke-Template {
+  $title = "Pim Brouwers"
   $rawContent = Get-Content index.md -Raw
   
   $postRoll = ($postMeta | ForEach-Object {
