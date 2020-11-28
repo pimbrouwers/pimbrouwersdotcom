@@ -41,7 +41,8 @@ let query sql param map conn =
 To support the above syntax we'll create ourselves a module called SQL, import `System.Data` and for this example we'll use `System.Data.SqlClient` (though you could sub this with any vendor). Once we've gotten our dependencies imported, creating wrapper for ADO becomes trivial.
 
 ```
-module SQL =
+module SQL
+
 open System.Data
 open System.Data.SqlClient
 

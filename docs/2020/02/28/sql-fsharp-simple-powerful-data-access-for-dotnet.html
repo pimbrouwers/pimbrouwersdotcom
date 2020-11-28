@@ -68,7 +68,8 @@ p > code { padding: 0 .125em; }
     [ while rd.Read() do yield map rd ]
 </code></pre>
 <p>To support the above syntax we'll create ourselves a module called SQL, import <code>System.Data</code> and for this example we'll use <code>System.Data.SqlClient</code> (though you could sub this with any vendor). Once we've gotten our dependencies imported, creating wrapper for ADO becomes trivial.</p>
-<pre><code>module SQL =
+<pre><code>module SQL
+
 open System.Data
 open System.Data.SqlClient
 
