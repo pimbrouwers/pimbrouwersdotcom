@@ -2,81 +2,57 @@
 
 # SQL |> F#: Simple & powerful data access for .NET
 
-In the spirit of starting small and finishing big, we'll look at the simple task of working with a relational database.
+In the spirit of starting small and finishing big, we'll look at the simple task of working with a relational database. Rather than immediately reaching for one of the libraries like SqlProvider (which is an excellent tool, but not the point here), we'll stick to just basic ADO.NET.
 
 * * *
 
 <small class="muted monospace">FEBRUARY 28, 2020</small>
 
-Rather than immediately reaching for one of the libraries like SqlProvider (which is an excellent tool, but not the point here), we'll stick to just basic ADO.NET.
-
 To achieve a very useful module you actually need very little code, which is one of the major benefits of F# in my opinion. For our simple scope, we know we need:
 
-*   A way to create connections (i.e. connection factory)`
-
-```
-let newConnection connectionString =
-    let conn = new SqlConnection(connectionString)
-    conn.Open()
-    conn
-```
-
-*   A way to execute statements (i.e. INSERT, UPDATE)`
-
-```
-let exec sql param conn =
-    let cmd = newCommand sql param conn
-    cmd.ExecuteNonQuery()
-```
-
-*   A way to query records (i.e. SELECT)`
-
-```
-let query sql param map conn =
-    let cmd = newCommand sql param conn
-    use rd = cmd.ExecuteReader()
-    [ while rd.Read() do yield map rd ]
-```
+* A way to create new commands.
+* A way to execute statements (i.e. INSERT, UPDATE).
+* A way to query records (i.e. SELECT).
 
 To support the above syntax we'll create ourselves a module called SQL, import `System.Data` and for this example we'll use `System.Data.SqlClient` (though you could sub this with any vendor). Once we've gotten our dependencies imported, creating wrapper for ADO becomes trivial.
 
-```
-module SQL
+```fsharp
+module Db
 
 open System.Data
 open System.Data.SqlClient
 
-let newConnection (connectionString : string) =
-    let conn = new SqlConnection(connectionString)
-    conn.Open()
-    conn
-
-let createParameter (cmd: SqlCommand) (name : string, value : obj) =
-    let p = cmd.CreateParameter()
-    p.ParameterName <- name
-    p.Value <- value
-    p
-
-let addParameter (cmd: SqlCommand) (p : SqlParameter) = 
-    cmd.Parameters.Add(p) |> ignore
-
+/// Create a new IDbCommand from SQL statement & parameters,
+/// and execute against connection
 let newCommand 
     (sql : string) 
-    (parameters : seq<string * obj>)
+    (parameters : seq<string * obj>) 
     (conn : IDbConnection) =        
+    let createParameter (cmd: SqlCommand) (name : string, value : obj) =
+        let p = cmd.CreateParameter()
+        p.ParameterName <- name
+        p.Value <- value
+        p
+
+    let addParameter (cmd: SqlCommand) (p : SqlParameter) = 
+        cmd.Parameters.Add(p) |> ignore
+
     let cmd = new SqlCommand(connection = conn, cmdText = sql)
+
     cmd.CommandType <- CommandType.Text        
     parameters 
-    |> Seq.iter (fun p -> p |> createParam cmd |> addParam cmd)
+    |> Seq.iter (fun p -> p |> createParameter cmd |> addParameter cmd)
     cmd 
 
+/// Execute an IDbCommand that has no results
 let exec 
     (sql : string) 
-    (parameters : seq<string * obj>)
+    (parameters : seq<string * obj>) 
     (conn : IDbConnection) =        
     let cmd = newCommand sql param conn
     cmd.ExecuteNonQuery()
 
+/// Execute an IDbCommand and map results during enumeration
 let query 
     (sql : string) 
     (parameters : seq<string * obj>) 

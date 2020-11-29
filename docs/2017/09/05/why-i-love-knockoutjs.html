@@ -9,27 +9,35 @@
 <title>Why I love KnockoutJS</title> 
 
 <!-- /head/style -->
+<link href="/prism.css" rel="stylesheet" />
 <style>
-html { max-width: 45rem; margin: 1rem; font-size: 16px; font-family: Georgia, serif; line-height: 1.5; color: #333; }
-hr { max-width: 80px; height: 0; margin: 2rem 0; border-top: 1px dotted #ccc; }
+:root {
+  --silver: rgb(204, 204, 204);
+  --purple: rgb(184, 69, 252);
+  --washed-purple: rgba(185, 69, 252, 0.102);
+}
+html { max-width: 48rem; margin: 1rem; font-size: 16px; font-family: Georgia, serif; line-height: 1.5; color: #333; }
+hr { max-width: 80px; height: 0; margin: 2rem 0; border-top: 1px dotted var(--silver); }
 h3 { font-weight: 400; }
 a { color: inherit; }
 p, p > a, p > a:visited { color: inherit; }
-p > a:hover { color: #B845FC; }
-blockquote { margin-left: 0; margin-right: 0; padding: 1em; border-left: 4px solid #ddd; background: #eee; }
+p > a:hover { color: var(--purple); }
+blockquote { margin-left: 0; margin-right: 0; padding: 1em; border-left: 4px solid var(--purple); background: var(--washed-purple); }
 
 .big { font-size: 125%; }
 .muted { opacity: .5; }
 .monospace { font-family: monospace; }
 
-pre { overflow-x: auto; overflow-wrap: normal; white-space: pre; font-size: .875rem; margin: 1rem 0; padding: 1rem; color: #eff0f9; background: #29292e; }
-code { vertical-align: middle; font-family: monospace; background-color: #eee; }
+code[class*="language-"], pre[class*="language-"] { font-size: 1rem; }
+pre[class*="language-"] { padding: 1rem; }
+pre { overflow-x: auto; overflow-wrap: normal; white-space: pre; font-size: .875rem; margin: 1rem 0; padding: 1rem; color: #eff0f9; background: #333; }
+code { vertical-align: middle; font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace; background-color: var(--silver); }
 pre > code { background-color: inherit; }
 p > code { padding: 0 .125em; }
 
 @media screen and (min-width: 640px) {  
   html { margin: 7% 10%; }
-  body { font-size: 1.125em; }
+  body { font-size: 1.125em; }  
 }
 </style>
 </head>
@@ -74,6 +82,7 @@ p > code { padding: 0 .125em; }
   </p>
 </footer>
 
+<script src="/prism.js"></script>
 </body>
 </html>
 

@@ -9,27 +9,35 @@
 <title>SQL |> F#: Simple & powerful data access for .NET</title> 
 
 <!-- /head/style -->
+<link href="/prism.css" rel="stylesheet" />
 <style>
-html { max-width: 45rem; margin: 1rem; font-size: 16px; font-family: Georgia, serif; line-height: 1.5; color: #333; }
-hr { max-width: 80px; height: 0; margin: 2rem 0; border-top: 1px dotted #ccc; }
+:root {
+  --silver: rgb(204, 204, 204);
+  --purple: rgb(184, 69, 252);
+  --washed-purple: rgba(185, 69, 252, 0.102);
+}
+html { max-width: 48rem; margin: 1rem; font-size: 16px; font-family: Georgia, serif; line-height: 1.5; color: #333; }
+hr { max-width: 80px; height: 0; margin: 2rem 0; border-top: 1px dotted var(--silver); }
 h3 { font-weight: 400; }
 a { color: inherit; }
 p, p > a, p > a:visited { color: inherit; }
-p > a:hover { color: #B845FC; }
-blockquote { margin-left: 0; margin-right: 0; padding: 1em; border-left: 4px solid #ddd; background: #eee; }
+p > a:hover { color: var(--purple); }
+blockquote { margin-left: 0; margin-right: 0; padding: 1em; border-left: 4px solid var(--purple); background: var(--washed-purple); }
 
 .big { font-size: 125%; }
 .muted { opacity: .5; }
 .monospace { font-family: monospace; }
 
-pre { overflow-x: auto; overflow-wrap: normal; white-space: pre; font-size: .875rem; margin: 1rem 0; padding: 1rem; color: #eff0f9; background: #29292e; }
-code { vertical-align: middle; font-family: monospace; background-color: #eee; }
+code[class*="language-"], pre[class*="language-"] { font-size: 1rem; }
+pre[class*="language-"] { padding: 1rem; }
+pre { overflow-x: auto; overflow-wrap: normal; white-space: pre; font-size: .875rem; margin: 1rem 0; padding: 1rem; color: #eff0f9; background: #333; }
+code { vertical-align: middle; font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace; background-color: var(--silver); }
 pre > code { background-color: inherit; }
 p > code { padding: 0 .125em; }
 
 @media screen and (min-width: 640px) {  
   html { margin: 7% 10%; }
-  body { font-size: 1.125em; }
+  body { font-size: 1.125em; }  
 }
 </style>
 </head>
@@ -39,71 +47,52 @@ p > code { padding: 0 .125em; }
 <!-- /body/post -->
 <p><a href="/">« Go home</a></p>
 <h1 id="sql-f-simple-powerful-data-access-for.net">SQL |&gt; F#: Simple &amp; powerful data access for .NET</h1>
-<p>In the spirit of starting small and finishing big, we'll look at the simple task of working with a relational database.</p>
+<p>In the spirit of starting small and finishing big, we'll look at the simple task of working with a relational database. Rather than immediately reaching for one of the libraries like SqlProvider (which is an excellent tool, but not the point here), we'll stick to just basic ADO.NET.</p>
 <hr />
 <p><small class="muted monospace">FEBRUARY 28, 2020</small></p>
-<p>Rather than immediately reaching for one of the libraries like SqlProvider (which is an excellent tool, but not the point here), we'll stick to just basic ADO.NET.</p>
 <p>To achieve a very useful module you actually need very little code, which is one of the major benefits of F# in my opinion. For our simple scope, we know we need:</p>
 <ul>
-<li>A way to create connections (i.e. connection factory)`</li>
+<li>A way to create new commands.</li>
+<li>A way to execute statements (i.e. INSERT, UPDATE).</li>
+<li>A way to query records (i.e. SELECT).</li>
 </ul>
-<pre><code>let newConnection connectionString =
-    let conn = new SqlConnection(connectionString)
-    conn.Open()
-    conn
-</code></pre>
-<ul>
-<li>A way to execute statements (i.e. INSERT, UPDATE)`</li>
-</ul>
-<pre><code>let exec sql param conn =
-    let cmd = newCommand sql param conn
-    cmd.ExecuteNonQuery()
-</code></pre>
-<ul>
-<li>A way to query records (i.e. SELECT)`</li>
-</ul>
-<pre><code>let query sql param map conn =
-    let cmd = newCommand sql param conn
-    use rd = cmd.ExecuteReader()
-    [ while rd.Read() do yield map rd ]
-</code></pre>
 <p>To support the above syntax we'll create ourselves a module called SQL, import <code>System.Data</code> and for this example we'll use <code>System.Data.SqlClient</code> (though you could sub this with any vendor). Once we've gotten our dependencies imported, creating wrapper for ADO becomes trivial.</p>
-<pre><code>module SQL
+<pre><code class="language-fsharp">module Db
 
 open System.Data
 open System.Data.SqlClient
 
-let newConnection (connectionString : string) =
-    let conn = new SqlConnection(connectionString)
-    conn.Open()
-    conn
-
-let createParameter (cmd: SqlCommand) (name : string, value : obj) =
-    let p = cmd.CreateParameter()
-    p.ParameterName &lt;- name
-    p.Value &lt;- value
-    p
-
-let addParameter (cmd: SqlCommand) (p : SqlParameter) = 
-    cmd.Parameters.Add(p) |&gt; ignore
-
+/// Create a new IDbCommand from SQL statement &amp; parameters,
+/// and execute against connection
 let newCommand 
     (sql : string) 
-    (parameters : seq&lt;string * obj&gt;)
+    (parameters : seq&lt;string * obj&gt;) 
     (conn : IDbConnection) =        
+    let createParameter (cmd: SqlCommand) (name : string, value : obj) =
+        let p = cmd.CreateParameter()
+        p.ParameterName &lt;- name
+        p.Value &lt;- value
+        p
+
+    let addParameter (cmd: SqlCommand) (p : SqlParameter) = 
+        cmd.Parameters.Add(p) |&gt; ignore
+
     let cmd = new SqlCommand(connection = conn, cmdText = sql)
+
     cmd.CommandType &lt;- CommandType.Text        
     parameters 
-    |&gt; Seq.iter (fun p -&gt; p |&gt; createParam cmd |&gt; addParam cmd)
+    |&gt; Seq.iter (fun p -&gt; p |&gt; createParameter cmd |&gt; addParameter cmd)
     cmd 
 
+/// Execute an IDbCommand that has no results
 let exec 
     (sql : string) 
-    (parameters : seq&lt;string * obj&gt;)
+    (parameters : seq&lt;string * obj&gt;) 
     (conn : IDbConnection) =        
     let cmd = newCommand sql param conn
     cmd.ExecuteNonQuery()
 
+/// Execute an IDbCommand and map results during enumeration
 let query 
     (sql : string) 
     (parameters : seq&lt;string * obj&gt;) 
@@ -132,6 +121,7 @@ let query
   </p>
 </footer>
 
+<script src="/prism.js"></script>
 </body>
 </html>
 

@@ -22,7 +22,7 @@ New-Item -ItemType Directory $outputDir | Write-Verbose
 
 #
 # Copy cruft
-Copy-Item -Path CNAME, favicon.ico, google554480d307a91437.html -Destination $outputDir
+Copy-Item -Path CNAME, prism.css, prism.js, favicon.ico, google554480d307a91437.html -Destination $outputDir
 
 #
 # Build posts
@@ -118,6 +118,7 @@ Invoke-Template {
 
   $postHtml = $markdown | Select-Object -ExpandProperty Html  
 
+  Write-Debug $title
   Write-Debug $postHtml
 
   Render-Template $template 

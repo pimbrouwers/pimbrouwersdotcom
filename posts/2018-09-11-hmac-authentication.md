@@ -16,7 +16,7 @@ Most of the time the providers of this information don't wish to make it publicl
 
 The bulk of API providers, not all, will typically resort to what's known as Basic Authentication, which is nothing more than a username and password combined with a colon and non-securely encoded into what's called a digest:
 
-```
+```csharp
 // NOTE: this is pseudo-code
 string usernameAndPassword = "username:password";
 string digest = base64(usernameAndPassword); 
@@ -37,8 +37,8 @@ This is where HMAC Authentication (hash based message authentication) comes into
 
 Opposed to sending the raw password on each request, a secure hash of the password and some other information is generated and sent in the HTTP Header. Often times this "other information" is the URI (universal resource indicator) and HTTP Verb (GET, POST etc.) of the request.
 
-```
-// NOTE: this is pseudo-code         
+```csharp
+// NOTE: this is pseudo-code   
 string username = "username";
 string password = "password";
 
