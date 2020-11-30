@@ -11,7 +11,7 @@ $postRoll
 ## Projects
 [Falco](//github.com/pimbrouwers/Falco) - A functional toolkit for building brilliant ASP.NET Core applications using F#.
 
-[Donald](//github.com/pimbrouwers/Donald) - A succinct F# DSL for ADO.NET.
+[Donald](//github.com/pimbrouwers/Donald) - A succinct F# DSL for ADO.NET with pleasant ergonomics.
 
 [Validus](//github.com/pimbrouwers/Validus) - A composable input validation library for F#.
 
