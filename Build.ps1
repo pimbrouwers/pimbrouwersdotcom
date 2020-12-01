@@ -22,7 +22,7 @@ New-Item -ItemType Directory $outputDir | Write-Verbose
 
 #
 # Copy cruft
-Copy-Item -Path CNAME, prism.css, prism.js, favicon.ico, google554480d307a91437.html -Destination $outputDir
+Copy-Item -Path CNAME, prism.css, prism.js, favicon.ico -Destination $outputDir
 
 #
 # Build posts
