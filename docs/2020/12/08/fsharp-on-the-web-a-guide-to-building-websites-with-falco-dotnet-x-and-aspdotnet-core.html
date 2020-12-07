@@ -20,7 +20,6 @@
 }
 html { max-width: 48rem; margin: 1rem; font-size: 16px; font-family: Georgia, serif; line-height: 1.5; color: var(--slate); background: var(--sepia); }
 hr { max-width: 80px; height: 0; margin: 2rem 0; border-top: 1px dotted var(--silver); }
-h3 { font-weight: 400; }
 a { color: inherit; }
 p, p > a, p > a:visited { color: inherit; }
 p > a:hover { color: var(--purple); }
@@ -40,6 +39,8 @@ p > code { padding: 0 .25rem; }
 @media screen and (min-width: 640px) {  
   html { margin: 7% 10%; }
   body { font-size: 1.125em; }  
+  h2 { margin: 1.75em 0 0; }
+  h3 { margin: 1.75em 0 0; }
   code[class*="language-"], pre[class*="language-"] { font-size: 1rem; }
 }
 </style>
@@ -62,44 +63,27 @@ p > code { padding: 0 .25rem; }
 <p>F# has a rich and mature development scene for both client- and server-side web programming. <a href="https://github.com/fable-compiler/Fable">Fable</a> revolutionized the durability with which you can craft client-side code, providing F#'s steadfast type system and an MVU programming model. On there server, <a href="https://github.com/giraffe-fsharp/giraffe">Giraffe</a>, <a href="https://github.com/SaturnFramework/Saturn">Saturn</a> and <a href="https://github.com/pimbrouwers/Falco">Falco</a> each offer their own unique way of providing similar durability on the server.</p>
 <hr />
 <p><small class="muted monospace">DECEMBER 8, 2020</small></p>
-<p>The focus of this post is going to be the <a href="https://github.com/pimbrouwers/Falco">Falco Framework</a>, where will aim to build a small, but complete-<em>ish</em> bullet journal using .NET 5.x and ASP.NET Core. We'll also be bringing in a couple of other packages to help us get the job done:</p>
+<p>The focus of this post is going to be the <a href="https://github.com/pimbrouwers/Falco">Falco Framework</a>, where will aim to build a small, but complete-<em>ish</em> bullet journal using .NET 5.x and ASP.NET Core.</p>
+<blockquote>
+<p>The final solution can be found <a href="https://github.com/pimbrouwers/FalcoJournal">here</a> if you'd like to follow along that way.</p>
+</blockquote>
+<p>We'll be bringing in a couple of other packages to help us get the job done as well:</p>
 <ul>
 <li><a href="https://www.nuget.org/packages/System.Data.SQLite">System.Data.SQLite</a></li>
 <li><a href="https://github.com/pimbrouwers/Donald">Donald</a></li>
 <li><a href="https://github.com/pimbrouwers/Validus">Validus</a></li>
 </ul>
-<blockquote>
-<p>This post assumes you have SQLite 3 installed and available in your path. Command-line snippets will be shown using PowerShell.</p>
-</blockquote>
-<p>The final app will look something like:
-<img src="/img/2020-12-08-fsharp-falco/app.png" alt="&quot;FalcoJournal screenshot&quot;" /></p>
-<h2 id="the-setup">The Setup</h2>
-<p>We'll start by getting our project laid out, and a valid server running that responds to <code>GET /</code> with <em>&quot;hello world&quot;</em>. This lets us get the server setup cruft out of the way early, so we can focus on the actual functionality later on.</p>
-<p>The first thing we'll do is install the Falco templates from NuGet:</p>
-<pre><code class="language-powershell">PS C:\&gt; dotnet new -i &quot;Falco.Template::*&quot;
-</code></pre>
-<p>Next, we'll get our project setup:</p>
-<pre><code class="language-powershell">PS C:\Users\pim\code&gt; New-Item -Path FalcoJournal\src -ItemType Directory
-PS C:\Users\pim\code&gt; cd FalcoJournal
-PS C:\Users\pim\code\FalcoJournal&gt; dotnet new sln
-PS C:\Users\pim\code\FalcoJournal&gt; dotnet new falco -o src -n FalcoJournal
-PS C:\Users\pim\code\FalcoJournal&gt; dotnet sln add .\src\FalcoJournal
-</code></pre>
-<p>And finally, install our dependencies:</p>
-<pre><code class="language-poweshell">PS C:\Users\pim\code\FalcoJournal&gt; dotnet add .\src\FalcoJournal package System.Data.SQLite
-PS C:\Users\pim\code\FalcoJournal&gt; dotnet add .\src\FalcoJournal package Donald
-PS C:\Users\pim\code\FalcoJournal&gt; dotnet add .\src\FalcoJournal package Validus
-</code></pre>
-<p>At this point, we should have ourselves a working solution with a runnable Falco app. If you execute the commands below, a hello world app should be available at <a href="https://localhost:5001">https://localhost:5001</a>.</p>
-<pre><code class="language-powershell">PS C:\Users\pim\code\FalcoJournal&gt; dotnet restore
-PS C:\Users\pim\code\FalcoJournal&gt; dotnet build
-PS C:\Users\pim\code\FalcoJournal&gt; dotnet run -p .\src\FalcoJournal
-</code></pre>
-<h2 id="the-domain">The Domain</h2>
+<p>The final app will look something like:</p>
+<p><img src="/img/2020-12-08-fsharp-falco/app.png" alt="&quot;FalcoJournal screenshot&quot;" /></p>
+<h2 id="domain">Domain</h2>
 <p>Our bullet journal has a dead simple domain, since we effectively only have one entity to concern ourselves with, a journal entry. But this is great because it will let us focus most of our energy on the web side of things.</p>
 <p>To encapsulate our journal entry we'll need to know a few things, 1) the content, 2) when it was written and 3) a way to look it up in the future.</p>
 <p>In F# it will look something like:</p>
-<pre><code class="language-fsharp">type Entry = 
+<pre><code class="language-fsharp">module FalcoJournal.Domain 
+
+open System
+
+type Entry = 
     { EntryId      : int
       HtmlContent  : string 
       TextContent  : string
@@ -116,8 +100,14 @@ PS C:\Users\pim\code\FalcoJournal&gt; dotnet run -p .\src\FalcoJournal
 <blockquote>
 <p>Notice the addition of <code>modified_date</code> here. We've purposefully omitted this from the F# model since we don't want the app to exude any control over this. But it will come in useful later for intraday sorting.</p>
 </blockquote>
-<p>Another thing we'll want to model is the state changes of our entry, which will take the form of either 1) creating a new entry, or 2) updating existing entry. I like this approach, despite it involving some duplicate code, becuase it uses the type system to make our intent clear and more importantly prevents us from filling meaningful fields with placeholder data (i.e. junk).</p>
-<pre><code class="language-fsharp">type NewEntry = 
+<p>Another thing we'll want to model is the state changes of our entry, which will take the form of either 1) creating a new entry, or 2) updating existing entry. I like this approach, despite it involving some duplicate code, becuase it uses the type system to make our intent clear and more importantly prevents us from filling meaningful fields with placeholder data to knowingly ignore.</p>
+<pre><code class="language-fsharp">module FalcoJournal.Domain 
+
+open System
+
+// ...
+
+type NewEntry = 
     { HtmlContent : string 
       TextContent : string }
 
@@ -126,13 +116,20 @@ type UpdateEntry =
       HtmlContent : string 
       TextContent : string }
 </code></pre>
+<h3 id="input-validation">Input Validation</h3>
 <p>It's important to stop here for a minute and appreciate that these two entities represent points of input from the user. This means it would likely be wise of us to put some guards in place to ensure that data follows the shape we expect it to. To do this we'll run input validation against the raw input values, using <a href="https://github.com/pimbrouwers/Validus">Validus</a>.</p>
 <p>Our goal will be to:</p>
 <ul>
 <li>Ensure the user can't submit an empty entry.</li>
 <li>Ensure the user can't submit an entry with an invalid identifier.</li>
 </ul>
-<pre><code class="language-fsharp">type NewEntry = 
+<pre><code class="language-fsharp">module FalcoJournal.Domain 
+
+open System
+
+// ...
+
+type NewEntry = 
     { HtmlContent : string 
       TextContent : string }
 
@@ -182,8 +179,209 @@ Validator {fieldName} {value}
 // string -&gt; 'a -&gt; ValidationResult&lt;'a&gt;
 </code></pre>
 <p>Validators can be composed using the <code>&lt;+&gt;</code> operator, or <code>Validator.compose</code>. This is demonstated above in the <code>let htmlValidator : Validator&lt;string&gt; = ...</code> which combines two string validators, including a custom message for the case of an empty <code>&lt;li&gt;&lt;/li&gt;</code>.</p>
-<h2 id="the-ui">The UI</h2>
-<p>...</p>
+<h2 id="ui">UI</h2>
+<p>Next on our list are some of the UI elements that will be shared amongst our handlers, including things like buttons, form fields, the layout, top bar and error summary. We'll be using <a href="/2018/12/05/tachyons-the-best-library-you-re-not-using.html">tachyons</a> atomic CSS library since it's lovely for rapid UI development.</p>
+<blockquote>
+<p>Note that to save some space we won't be outlining all of the UI elements in the post. But the full source can be found in final <a href="https://github.com/pimbrouwers/FalcoJournal">repository</a>.</p>
+</blockquote>
+<h3 id="falco-view-engine">Falco View Engine</h3>
+<p>A core feature of <a href="https://github.com/pimbrouwers/Falco">Falco</a> is the XML markup module. It can be used to produce any form of angle-bracket markup (i.e. HTML, SVG, XML etc.).</p>
+<p>Most of the standard HTML tags &amp; attributes have been built into the markup module, which are pure functions composed into well-formed markup at run time. HTML tag functions are found in the <code>Elem</code> module, attributes in the <code>Attr</code> module. For string literal output there are several functions available in the <code>Text</code> module.</p>
+<pre><code class="language-fsharp">Elem.div [ Attr.class' &quot;bg-red&quot; ] [ Text.rawf &quot;Hello %s&quot; &quot;world&quot; ]
+</code></pre>
+<p>Rumor has it that the <a href="https://github.com/pimbrouwers/Falco">Falco</a> creator makes a dog sound everytime he uses <code>Text.rawf</code>.</p>
+<blockquote>
+<p><strong>Note</strong>: I am the creator, and this is entirely true.</p>
+</blockquote>
+<h3 id="extensible-ui">Extensible UI</h3>
+<p>Idiomatic usage of the <code>Markup</code> module will involve building yourself a suite of project-specific functions for shared UI elements/sections/components. Doing this will darastically simplify the markup code in the feature layer(s).</p>
+<p>To demonstrate how this might look, the code below shows some of the common UI elements in our app.</p>
+<p>The important takeaway is how extensible having a view engine comprised of pure functions is. End-of-the-line elements, like the <code>pageTitle</code> below, darastically simplify the API for creating the specific chunk of markup. Wrapper elements, like the <code>topBar</code> below, show how elegantly we can compose complex view thanks to the recursive structure of the <code>XmlNode</code> type.</p>
+<pre><code class="language-fsharp">module FalcoJournal.UI
+
+open Falco.Markup
+
+module Common = 
+    /// Display a list of errors as &lt;ul&gt;...&lt;/ul&gt;
+    let errorSummary (errors : string list) =
+        match errors.Length with
+        | n when n &gt; 0 -&gt;
+            Elem.ul [ Attr.class' &quot;mt0 pa2 pl4 red bg-washed-red ba br1 b--red&quot; ] 
+                    (errors |&gt; List.map (fun e -&gt; Elem.li [] [ Text.raw e ]))
+
+        | _ -&gt; 
+            Elem.div [] []
+
+    /// Page title as &lt;h1&gt;&lt;/h1&gt;
+    let pageTitle (title : string) =
+        Elem.h1 [ Attr.class' &quot;pb3 code tc white-90&quot; ] [ Text.raw title ]
+
+    /// Top bar with pluggable actions
+    let topBar (actions : XmlNode list) =
+        Elem.header [ Attr.class' &quot;pv4&quot; ] [
+            Elem.nav [ Attr.class' &quot;flex items-center&quot; ] [
+                Elem.a [ Attr.class' &quot;f4 f3-l white-90 no-underline&quot; 
+                         Attr.href Urls.index ] [ Text.raw &quot;Falco Journal&quot; ]
+                Elem.div [ Attr.class' &quot;flex-grow-1 tr&quot; ] actions ] ]
+</code></pre>
+<h2 id="data-access">Data Access</h2>
+<p>We're going to build ourselves a simple, yet robust data access layer using <a href="https://github.com/pimbrouwers/Donald">Donald</a>. For the sake of simplicity, we'll be sticking to a synchronous approach here, which suits us well anyway given our use of SQLite.</p>
+<p>The programming model for <a href="https://github.com/pimbrouwers/Donald">Donald</a> is simple, build a <code>IDbCommand</code> from a SQL statement and parameter set, and execute against either an <code>IDbConnection</code> or <code>IDbTransaction</code> (for transactional scenarios). Given that the operation is occurring against a medium with side effects, the return type is always of <code>DbResult&lt;'a&gt;</code>.</p>
+<p>To make the development process easier, I find it very useful to devise a &quot;log and pass-through&quot; function for <code>DbResult&lt;'a&gt;</code> (which conveniently returns the full statement and exception thrown):</p>
+<blockquote>
+<p><strong>Fun fact</strong>: Unlike ADO.NET, <a href="https://github.com/pimbrouwers/Donald">Donald</a> will return field-specific errors when they occur. Providing not only the full statement, but also the specific field which caused the error.</p>
+</blockquote>
+<pre><code class="language-fsharp">module FalcoJournal.Provider
+
+open System.Data
+open Donald
+open Microsoft.Extensions.Logging
+open FalcoJournal.Domain
+
+// ...
+
+module private DbResult = 
+    /// Log DbResult, if error, and return
+    let logError (log : ILogger) (dbResult : DbResult&lt;'a&gt;) : DbResult&lt;'a&gt; =
+        match dbResult with
+        | Ok _     -&gt; dbResult
+        | Error ex -&gt;
+            log.LogError(ex.Error, sprintf &quot;DB ERROR: Failed to execute\n%s&quot; ex.Statement)        
+            dbResult
+
+// ...
+</code></pre>
+<p>With this in place, we're ready to write some data access code. Again, to save time and space only a single example will be shown here. But the full source can be found in the <a href="https://github.com/pimbrouwers/FalcoJournal">repository</a>.</p>
+<pre><code class="language-fsharp">module FalcoJournal.Provider
+
+open System.Data
+open Donald
+open Microsoft.Extensions.Logging
+open FalcoJournal.Domain
+
+// ...
+
+module EntryProvider =  
+    type Get = int -&gt; DbResult&lt;Entry option&gt;
+
+    let get (log : ILogger) (conn : IDbConnection) =
+        fun entryId -&gt;
+            let sql = &quot;
+            SELECT    entry_id
+                    , html_content
+                    , text_content
+                    , entry_date
+            FROM      entry
+            WHERE     entry_id = @entry_id&quot;
+
+            let fromDataReader (rd : IDataReader) : Entry =
+                { EntryId      = rd.ReadInt32 &quot;entry_id&quot;
+                  HtmlContent  = rd.ReadString &quot;html_content&quot;
+                  TextContent  = rd.ReadString &quot;text_content&quot;
+                  EntryDate    = rd.ReadDateTime &quot;entry_date&quot; }
+
+            dbCommand conn {
+                cmdText  sql
+                cmdParam [ &quot;entry_id&quot;, SqlType.Int32 entryId ]
+            }
+            |&gt; DbConn.querySingle fromDataReader
+            |&gt; DbResult.logError log
+    // ...
+</code></pre>
+<p>Nothing crazy going on here, but a couple of interesting points to discuss. Firstly, you'll notice that we've specified a function type to represent the operation. I enjoy the ergonomics of this approach, since it ultimately becomes the interface between the IO and business layer's.</p>
+<p>The other point of note is that the function type contains no trace of the logger or database connection. So why is that? Since these are not concretely required to <em>perform</em> the operation, they aren't the concern of our final consumers. But they're still required, so how to we fulfill this dependency? Partial application of course! And for that, we'll use a <a href="#the-composition-root"><strong>composition root</strong></a> to ensure we aren't having to manually manifest these depdendencies each time we want to interact with the database.</p>
+<h3 id="a-brief-tangent-on-datbase-connections">A brief tangent on datbase connections</h3>
+<p>My preference for database-bound projects is to only specify how to create new <code>IDbConnection</code> instances in one place. So for that, we'll create a type to represent our <strong>connection factory</strong>.</p>
+<pre><code class="language-fsharp">type DbConnectionFactory = unit -&gt; IDbConnection
+</code></pre>
+<p>And we'll register an instance of this within our service collection in <code>Program.fs</code>:</p>
+<pre><code class="language-fsharp">module Falco.Program
+
+// ------------
+// Register services
+// ------------
+let configureServices (connectionFactory : DbConnectionFactory) (services : IServiceCollection) =    
+    services.AddSingleton&lt;DbConnectionFactory&gt;(connectionFactory)
+    // ...
+
+// -----------
+// Configure Web host
+// -----------
+let configureWebHost (endpoints : HttpEndpoint list) (webHost : IWebHostBuilder) =        
+    // ...
+    let connectionString = appConfiguration.GetConnectionString(&quot;Default&quot;)
+    let connectionFactory () = new SQLiteConnection(connectionString, true) :&gt; IDbConnection
+    // ...
+
+</code></pre>
+<h2 id="the-composition-root">The composition root</h2>
+<p>Now this next little bit is completely optional, you can very effectively build Falco apps without doing this. But I love this approach because it gets me away from having to do the lambda-style <code>HttpHandler</code> every time I need access to dependencies, and almost becomes a tiny DSL for doing your business-logic that automatically enriches your IO layer with it's dependencies.</p>
+<p>Since we're now in the web-tier so to speak, we can begin to leverage the composable <code>HttpHandler</code> type. In combination with a very simple function definition, we can save ourselves a TON of code repetition in our feature layer. The best part? All of this amazing functionality only costs you 29 lines of code, with comments!</p>
+<pre><code class="language-fsharp">module FalcoJournal.Service
+
+open System.Data
+open Falco
+open Microsoft.Extensions.Logging
+open FalcoJournal.Provider
+
+/// Work to be done that has input and will generate output
+type ServiceHandler&lt;'input, 'output, 'error&gt; = 'input -&gt; Result&lt;'output, 'error&gt;
+
+/// An HttpHandler to execute services, and can help reduce code
+/// repetition by acting as a composition root for injecting
+/// dependencies for logging, database, http etc.
+let run
+    (serviceHandler: ILogger -&gt; IDbConnection -&gt; ServiceHandler&lt;'input, 'output, 'error&gt;)
+    (handleOk : 'output -&gt; HttpHandler)
+    (handleError : 'input -&gt; 'error -&gt; HttpHandler)
+    (input : 'input) : HttpHandler =
+    fun ctx -&gt;
+        let connectionFactory = ctx.GetService&lt;DbConnectionFactory&gt;()
+        use connection = connectionFactory ()
+        let log = ctx.GetLogger &quot;FalcoJournal.Service&quot;
+                
+        let respondWith = 
+            match serviceHandler log connection input with
+            | Ok output -&gt; handleOk output
+            | Error error -&gt; handleError input error
+
+        respondWith ctx
+</code></pre>
+<p>In a nutshell, we define a function type to represent a &quot;service&quot; (i.e. the work to be done) which effectively says &quot;given an input you will either receive a successful result containing output, or an error&quot;. It's basic, but powerful. Next, we create an <code>HttpHandler</code> which will manifiest our dependencies, inject them into the provided service and based on the response type invoke either a <em>success</em> or <em>failure</em> handler.</p>
+<p>With this in place, our final handlers will look like this, instead of each containing the code above.</p>
+<pre><code class="language-fsharp">let handle : HttpHandler = 
+    let handleError input error : HttpHandler = // ...
+    
+    let handleOk output  : HttpHandler = // ...
+
+    let workflow log conn input : ServiceHandler&lt;unit, Output, Error&gt; = // ...
+    
+    Service.run workflow handleOk handleError ()
+</code></pre>
+<h2 id="entry-feature">Entry Feature</h2>
+<p>Still with me? I realize it's been a lot of content to get here, but it's time for the raison d'être. Our app will be reponsible for 3 primary actions:</p>
+<ol>
+<li><p>List all journal entries by date descending - <code>GET /</code></p>
+</li>
+<li><p>Persistently create a journal entry - <code>POST /entry/create</code></p>
+</li>
+<li><p>Persistently update a journal entry - <code>POST /entry/edit/{id}</code></p>
+</li>
+</ol>
+<p>To do this, we're going to use a <strong>feature-based</strong> approach and encapsulate each action into it's own module with roughly the following shape:</p>
+<pre><code class="language-fsharp">module FalcoJournal.Entry
+
+module Index = 
+    type Input = // ... (optional)
+
+    type Error = // ...
+
+    let service : ServiceHandler&lt;'a, 'b, Error&gt; = // ...
+
+    let view : XmlNode = // ...
+
+    let handle : HttpHandler = // ...
+</code></pre>
 
 
 <!-- /body/footer -->
