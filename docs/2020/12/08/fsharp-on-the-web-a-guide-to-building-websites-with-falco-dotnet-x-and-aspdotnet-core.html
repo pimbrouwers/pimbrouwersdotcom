@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- /head --> 
+<head>
+<meta charset="utf-8">
+<meta content="width=device-width,initial-scale=1" name="viewport">
+<meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+<title>F# on the Web: A guide to building websites with Falco, .NET 5.x and ASP.NET Core</title> 
+
+<!-- /head/style -->
+<link href="/prism.css" rel="stylesheet" />
+<style>
+:root {
+  --sepia: rgb(254, 252, 251);
+  --silver: rgb(204, 204, 204);
+  --slate: rgb(51, 51, 51);
+  --purple: rgb(184, 69, 252);
+  --washed-purple: rgba(185, 69, 252, 0.102);
+}
+html { max-width: 48rem; margin: 1rem; font-size: 16px; font-family: Georgia, serif; line-height: 1.5; color: var(--slate); background: var(--sepia); }
+hr { max-width: 80px; height: 0; margin: 2rem 0; border-top: 1px dotted var(--silver); }
+h3 { font-weight: 400; }
+a { color: inherit; }
+p, p > a, p > a:visited { color: inherit; }
+p > a:hover { color: var(--purple); }
+blockquote { margin-left: 0; margin-right: 0; padding: 1em; border-left: 4px solid var(--purple); background: var(--washed-purple); }
+img { max-width: 100%; margin-top: .5rem; }
+.big { font-size: 125%; }
+.muted { opacity: .5; }
+.monospace { font-family: monospace; }
+
+code[class*="language-"], pre[class*="language-"] { font-size: .875rem; }
+pre[class*="language-"] { padding: 1rem; }
+pre { overflow-x: auto; overflow-wrap: normal; white-space: pre; font-size: .875rem; margin: 1rem 0; padding: 1rem; color: #eff0f9; background: #333; }
+code { vertical-align: middle; font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace; background-color: var(--washed-purple); }
+pre > code { background-color: inherit; }
+p > code { padding: 0 .25rem; }
+
+@media screen and (min-width: 640px) {  
+  html { margin: 7% 10%; }
+  body { font-size: 1.125em; }  
+  code[class*="language-"], pre[class*="language-"] { font-size: 1rem; }
+}
+</style>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-74210946-2"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-74210946-2');
+</script>
+</head>
+
+<!-- /body -->
+<body>
+<!-- /body/post -->
+<p><a href="/">« Go home</a></p>
+<h1 id="f-on-the-web-a-guide-to-building-websites-with-falco.net-5.x-and-asp.net-core">F# on the Web: A guide to building websites with Falco, .NET 5.x and ASP.NET Core</h1>
+<p>F# has a rich and mature development scene for both client- and server-side web programming. <a href="https://github.com/fable-compiler/Fable">Fable</a> revolutionized the durability with which you can craft client-side code, providing F#'s steadfast type system and an MVU programming model. On there server, <a href="https://github.com/giraffe-fsharp/giraffe">Giraffe</a>, <a href="https://github.com/SaturnFramework/Saturn">Saturn</a> and <a href="https://github.com/pimbrouwers/Falco">Falco</a> each offer their own unique way of providing similar durability on the server.</p>
+<hr />
+<p><small class="muted monospace">DECEMBER 8, 2020</small></p>
+<p>The focus of this post is going to be the <a href="https://github.com/pimbrouwers/Falco">Falco Framework</a>, where will aim to build a small, but complete-<em>ish</em> bullet journal using .NET 5.x and ASP.NET Core. We'll also be bringing in a couple of other packages to help us get the job done:</p>
+<ul>
+<li><a href="https://www.nuget.org/packages/System.Data.SQLite">System.Data.SQLite</a></li>
+<li><a href="https://github.com/pimbrouwers/Donald">Donald</a></li>
+<li><a href="https://github.com/pimbrouwers/Validus">Validus</a></li>
+</ul>
+<blockquote>
+<p>This post assumes you have SQLite 3 installed and available in your path. Command-line snippets will be shown using PowerShell.</p>
+</blockquote>
+<p>The final app will look something like:
+<img src="/img/2020-12-08-fsharp-falco/app.png" alt="&quot;FalcoJournal screenshot&quot;" /></p>
+<h2 id="the-setup">The Setup</h2>
+<p>We'll start by getting our project laid out, and a valid server running that responds to <code>GET /</code> with <em>&quot;hello world&quot;</em>. This lets us get the server setup cruft out of the way early, so we can focus on the actual functionality later on.</p>
+<p>The first thing we'll do is install the Falco templates from NuGet:</p>
+<pre><code class="language-powershell">PS C:\&gt; dotnet new -i &quot;Falco.Template::*&quot;
+</code></pre>
+<p>Next, we'll get our project setup:</p>
+<pre><code class="language-powershell">PS C:\Users\pim\code&gt; New-Item -Path FalcoJournal\src -ItemType Directory
+PS C:\Users\pim\code&gt; cd FalcoJournal
+PS C:\Users\pim\code\FalcoJournal&gt; dotnet new sln
+PS C:\Users\pim\code\FalcoJournal&gt; dotnet new falco -o src -n FalcoJournal
+PS C:\Users\pim\code\FalcoJournal&gt; dotnet sln add .\src\FalcoJournal
+</code></pre>
+<p>And finally, install our dependencies:</p>
+<pre><code class="language-poweshell">PS C:\Users\pim\code\FalcoJournal&gt; dotnet add .\src\FalcoJournal package System.Data.SQLite
+PS C:\Users\pim\code\FalcoJournal&gt; dotnet add .\src\FalcoJournal package Donald
+PS C:\Users\pim\code\FalcoJournal&gt; dotnet add .\src\FalcoJournal package Validus
+</code></pre>
+<p>At this point, we should have ourselves a working solution with a runnable Falco app. If you execute the commands below, a hello world app should be available at <a href="https://localhost:5001">https://localhost:5001</a>.</p>
+<pre><code class="language-powershell">PS C:\Users\pim\code\FalcoJournal&gt; dotnet restore
+PS C:\Users\pim\code\FalcoJournal&gt; dotnet build
+PS C:\Users\pim\code\FalcoJournal&gt; dotnet run -p .\src\FalcoJournal
+</code></pre>
+<h2 id="the-domain">The Domain</h2>
+<p>Our bullet journal has a dead simple domain, since we effectively only have one entity to concern ourselves with, a journal entry. But this is great because it will let us focus most of our energy on the web side of things.</p>
+<p>To encapsulate our journal entry we'll need to know a few things, 1) the content, 2) when it was written and 3) a way to look it up in the future.</p>
+<p>In F# it will look something like:</p>
+<pre><code class="language-fsharp">type Entry = 
+    { EntryId      : int
+      HtmlContent  : string 
+      TextContent  : string
+      EntryDate    : DateTime }
+</code></pre>
+<p>With the definition taking a similar shape in SQL:</p>
+<pre><code class="language-sql">CREATE TABLE entry (
+    entry_id       INTEGER  NOT NULL  PRIMARY KEY
+  , html_content   TEXT     NOT NULL  
+  , text_content   TEXT     NOT NULL
+  , entry_date     TEXT     NOT NULL
+  , modified_date  TEXT     NOT NULL);
+</code></pre>
+<blockquote>
+<p>Notice the addition of <code>modified_date</code> here. We've purposefully omitted this from the F# model since we don't want the app to exude any control over this. But it will come in useful later for intraday sorting.</p>
+</blockquote>
+<p>Another thing we'll want to model is the state changes of our entry, which will take the form of either 1) creating a new entry, or 2) updating existing entry. I like this approach, despite it involving some duplicate code, becuase it uses the type system to make our intent clear and more importantly prevents us from filling meaningful fields with placeholder data (i.e. junk).</p>
+<pre><code class="language-fsharp">type NewEntry = 
+    { HtmlContent : string 
+      TextContent : string }
+
+type UpdateEntry =
+    { EntryId     : int
+      HtmlContent : string 
+      TextContent : string }
+</code></pre>
+<p>It's important to stop here for a minute and appreciate that these two entities represent points of input from the user. This means it would likely be wise of us to put some guards in place to ensure that data follows the shape we expect it to. To do this we'll run input validation against the raw input values, using <a href="https://github.com/pimbrouwers/Validus">Validus</a>.</p>
+<p>Our goal will be to:</p>
+<ul>
+<li>Ensure the user can't submit an empty entry.</li>
+<li>Ensure the user can't submit an entry with an invalid identifier.</li>
+</ul>
+<pre><code class="language-fsharp">type NewEntry = 
+    { HtmlContent : string 
+      TextContent : string }
+
+    // equally valid to make this a module function
+    static member Create html text : ValidationResult&lt;NewEntry&gt; =
+        let htmlValidator : Validator&lt;string&gt; = 
+            // ensure the HTML is not empty, and check for empty &lt;li&gt;&lt;/li&gt;
+            // which is the default value
+            Validators.String.notEmpty None
+            &lt;+&gt; Validators.String.notEquals &quot;&lt;li&gt;&lt;/li&gt;&quot; (Some (sprintf &quot;%s must not be empty&quot;))
+
+        let create html text = 
+            { HtmlContent = html
+              TextContent = text }            
+
+        create
+        &lt;!&gt; htmlValidator &quot;HTML&quot; html
+        &lt;*&gt; Validators.String.notEmpty None &quot;Text&quot; text
+
+type UpdateEntry =
+    { EntryId     : int
+      HtmlContent : string 
+      TextContent : string }
+
+    // equally valid to make this a module function
+    static member Create entryId html text : ValidationResult&lt;UpdateEntry&gt; =        
+        let create (entryId : int) (entry : NewEntry) = 
+            { EntryId = entryId 
+              HtmlContent = entry.HtmlContent 
+              TextContent = entry.TextContent }
+
+        // repurpose the validation from NewEntry, since it's shape
+        // resembles this and also check that the EntryId is gt 0
+        create 
+        &lt;!&gt; Validators.Int.greaterThan 0 (Some (sprintf &quot;Invalid %s&quot;)) &quot;Entry ID&quot; entryId 
+        &lt;*&gt; NewEntry.Create html text
+</code></pre>
+<p>Now, this adds a fair chunk of code to our previous slim domain. But I'll argue it's worthwhile it for it to live here on the basis that this code is highly cohesive with the type and may end up being used in more than one place.</p>
+<p><a href="https://github.com/pimbrouwers/Validus">Validus</a> comes with validators for most primitives types, which reside in the <code>Validators</code> module. They all share a similar function defition, excluding config params. Using some loose F# pseudocode:</p>
+<pre><code class="language-fsharp">Validators.Int.greaterThan {minValue} {validation message}
+// int -&gt; ValidationMessage option -&gt; Validator 
+
+ValidationMessage {fieldName}
+// string -&gt; string
+
+Validator {fieldName} {value}
+// string -&gt; 'a -&gt; ValidationResult&lt;'a&gt;
+</code></pre>
+<p>Validators can be composed using the <code>&lt;+&gt;</code> operator, or <code>Validator.compose</code>. This is demonstated above in the <code>let htmlValidator : Validator&lt;string&gt; = ...</code> which combines two string validators, including a custom message for the case of an empty <code>&lt;li&gt;&lt;/li&gt;</code>.</p>
+<h2 id="the-ui">The UI</h2>
+<p>...</p>
+
+
+<!-- /body/footer -->
+<hr>
+<footer>
+  <p>
+    <div>Pim Brouwers</div>      
+    <div>
+      <a href="//twitter.com/pim_brouwers" target="_blank">Twitter</a>
+      <a href="//github.com/pimbrouwers" target="_blank">GitHub</a>
+    </div>
+  </p>
+</footer>
+
+<script src="/prism.js"></script>
+</body>
+</html>
+
+

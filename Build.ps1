@@ -22,7 +22,12 @@ New-Item -ItemType Directory $outputDir | Write-Verbose
 
 #
 # Copy cruft
-Copy-Item -Path CNAME, prism.css, prism.js, favicon.ico -Destination $outputDir
+Copy-Item -Path CNAME, prism.css, prism.js, favicon.ico -Destination $outputDir -Recurse
+
+#
+# Copy images
+New-Item -Path $outputDir\img -ItemType Directory | Write-Verbose
+Copy-Item -Path img\* -Destination $outputDir\img -Recurse
 
 #
 # Build posts
