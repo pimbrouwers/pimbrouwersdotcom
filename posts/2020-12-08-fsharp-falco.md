@@ -2,7 +2,7 @@
 
 # F# on the Web: A guide to building websites with Falco, .NET 5.x and ASP.NET Core
 
-F# has a rich and mature development scene for both client- and server-side web programming. [Fable][2] revolutionized the durability with which you can craft client-side code, providing F#'s steadfast type system and an MVU programming model. On there server, [Giraffe][3], [Saturn][4] and [Falco][1] each offer their own unique way of providing similar durability on the server.
+F# has a rich and mature development scene for both client- and server-side web programming. [Fable][2] revolutionized the durability with which you can craft client-side code, providing F#'s steadfast type system and an MVU programming model. On there server, [Giraffe][3], [Saturn][4] and [Falco][1] each offer their own unique way of providing similar durability.
 
 * * *
 
