@@ -20,12 +20,11 @@
 }
 html { max-width: 48rem; margin: 1rem; font-size: 16px; font-family: Georgia, serif; line-height: 1.5; color: var(--slate); background: var(--sepia); }
 hr { max-width: 80px; height: 0; margin: 2rem 0; border-top: 1px dotted var(--silver); }
-h3 { font-weight: 400; }
 a { color: inherit; }
 p, p > a, p > a:visited { color: inherit; }
 p > a:hover { color: var(--purple); }
 blockquote { margin-left: 0; margin-right: 0; padding: 1em; border-left: 4px solid var(--purple); background: var(--washed-purple); }
-
+img { max-width: 100%; margin-top: .5rem; }
 .big { font-size: 125%; }
 .muted { opacity: .5; }
 .monospace { font-family: monospace; }
@@ -40,6 +39,8 @@ p > code { padding: 0 .25rem; }
 @media screen and (min-width: 640px) {  
   html { margin: 7% 10%; }
   body { font-size: 1.125em; }  
+  h2 { margin: 1.75em 0 0; }
+  h3 { margin: 1.75em 0 0; }
   code[class*="language-"], pre[class*="language-"] { font-size: 1rem; }
 }
 </style>
@@ -60,6 +61,10 @@ p > code { padding: 0 .25rem; }
 <h1 id="this-is-a-website">This is a website</h1>
 <p class="big">Pim has a website and this is that website.</p>
 <hr />
+<p>
+    <small class="muted monospace">DECEMBER 8, 2020</small>			
+    <br /><a href="2020\12\08\fsharp-on-the-web-a-guide-to-building-websites-with-falco-dotnet-x-and-aspdotnet-core.html">F# on the Web: A guide to building websites with Falco, .NET 5.x and ASP.NET Core</a>
+</p>
 <p>
     <small class="muted monospace">FEBRUARY 28, 2020</small>			
     <br /><a href="2020\02\28\sql-fsharp-simple-powerful-data-access-for-dotnet.html">SQL |> F#: Simple & powerful data access for .NET</a>

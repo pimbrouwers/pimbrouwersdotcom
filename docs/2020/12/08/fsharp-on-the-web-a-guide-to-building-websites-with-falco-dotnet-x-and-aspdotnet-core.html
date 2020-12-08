@@ -290,7 +290,7 @@ module EntryProvider =
 </code></pre>
 <p>Nothing crazy going on here, but a couple of interesting points to discuss. Firstly, you'll notice that we've specified a function type to represent the operation. I enjoy the ergonomics of this approach, since it ultimately becomes the interface between the IO and business layer's.</p>
 <p>The other point of note is that the function type contains no trace of the logger or database connection. So why is that? Since these are not concretely required to <em>perform</em> the operation, they aren't the concern of our final consumers. But they're still required, so how to we fulfill this dependency? Partial application of course! And for that, we'll use a <a href="#the-composition-root"><strong>composition root</strong></a> to ensure we aren't having to manually manifest these depdendencies each time we want to interact with the database.</p>
-<h3 id="a-brief-tangent-on-datbase-connections">A brief tangent on datbase connections</h3>
+<h3 id="a-brief-tangent-on-database-connections">A brief tangent on database connections</h3>
 <p>My preference for database-bound projects is to only specify how to create new <code>IDbConnection</code> instances in one place. So for that, we'll create a type to represent our <strong>connection factory</strong>.</p>
 <pre><code class="language-fsharp">type DbConnectionFactory = unit -&gt; IDbConnection
 </code></pre>
@@ -363,15 +363,15 @@ let run
 <ol>
 <li><p>List all journal entries by date descending - <code>GET /</code></p>
 </li>
-<li><p>Persistently create a journal entry - <code>POST /entry/create</code></p>
+<li><p>Persistently create a journal entry - <code>GET + POST /entry/create</code></p>
 </li>
-<li><p>Persistently update a journal entry - <code>POST /entry/edit/{id}</code></p>
+<li><p>Persistently update a journal entry - <code>GET + POST /entry/edit/{id}</code></p>
 </li>
 </ol>
 <p>To do this, we're going to use a <strong>feature-based</strong> approach and encapsulate each action into it's own module with roughly the following shape:</p>
 <pre><code class="language-fsharp">module FalcoJournal.Entry
 
-module Index = 
+module Create = 
     type Input = // ... (optional)
 
     type Error = // ...
@@ -382,6 +382,142 @@ module Index =
 
     let handle : HttpHandler = // ...
 </code></pre>
+<p>For this post, we'll be covering #2, creating a new journal entry. But, feel free to checkout the <a href="https://github.com/pimbrouwers/FalcoJournal">full source</a> for the other two endpoints.</p>
+<h3 id="creating-a-new-journal-entry">Creating a new journal entry</h3>
+<p>When building server-side MPA's (multipage apps) most actions will come in pairs. A <code>GET</code> to load the initial UI and data, and a <code>POST</code> (or <code>PUT</code>) to handle submissions. Our case will be no exception. First we'll devise the <code>GET</code> handler and a view which will be shared between the pair. Then we'll move on to build the supporting <code>POST</code> action.</p>
+<h4 id="get-entrycreate"><code>GET /entry/create</code></h4>
+<p>For this endpoint we know we need a view, and a means of rendering it. Luckily we've already got a working suite of UI utilities to pull from, and Falco comes with everything we need to render it.</p>
+<pre><code class="language-fsharp">open Falco.JournalEntry 
+
+// ...
+
+module New =
+    let view (errors : string list) (newEntry : NewEntryModel) =
+        let title = &quot;A place for your thoughts...&quot;
+        
+        let actions = [
+            Forms.submit [ Attr.value &quot;Save Entry&quot;; Attr.form &quot;entry-editor&quot; ] 
+            Buttons.solidWhite &quot;Cancel&quot; Urls.index ]
+
+        let editorContent = 
+            match newEntry.HtmlContent with
+            | str when StringUtils.strEmpty str -&gt; 
+                Elem.li [] [] 
+
+            | _ -&gt;
+                Text.raw newEntry.HtmlContent
+
+        Layouts.master title [
+            Common.topBar actions
+            
+            Common.errorSummary errors
+            
+            Elem.form [ Attr.id &quot;entry-editor&quot;
+                        Attr.method &quot;post&quot;
+                        Attr.action Urls.entryCreate ] [
+
+                Elem.ul [ Attr.id &quot;bullet-editor&quot;
+                        Attr.class' &quot;mh0 pl3 outline-0&quot;
+                        Attr.create &quot;contenteditable&quot; &quot;true&quot; ] [
+                        
+                    editorContent
+                ]
+                
+                Elem.input [ Attr.id &quot;bullet-editor-html&quot; 
+                            Attr.type' &quot;hidden&quot; 
+                            Attr.name &quot;html_content&quot; ]      
+                            
+                Elem.input [ Attr.id &quot;bullet-editor-text&quot; 
+                            Attr.type' &quot;hidden&quot; 
+                            Attr.name &quot;text_content&quot; ]      
+            ]                     
+        ]
+
+    let handle : HttpHandler =
+        view [] NewEntryModel.Empty
+        |&gt; Response.ofHtml    
+</code></pre>
+<p>Some of this should already be familiar from our discussion in the <a href="#ui">UI</a> section, specifically the <code>Common.topBar</code> and <code>Common.errorSummary</code>. We've also introduced a few other UI elements, most notably our master layout (<code>Layouts.master</code>) and button elements (<code>Button.solidWhite</code>).</p>
+<p>You'll notice that our view function takes a <code>NewEntryModel</code> as it's final input parameter. This leads into one of the main benefits of using the <a href="https://github.com/pimbrouwers/Falco">Falco</a> markup module as an HTML view engine, strong typing. If the definition of <code>NewEntryModel</code> (seen below) changes in a breaking way, you better believe the compiler will tell you about it, and this is a great thing. Just think of all the bugs this can save!</p>
+<p>The actual handler in this case is pretty straight-forward. It simply invokves the view with an empty error list and empty model, and passes it into Falco's <code>Response.ofHtml</code> handler.</p>
+<blockquote>
+<p>Defining a static member for creating an empty record like this, <code>NewEntryModel.Empty</code>, is a pattern I like to keep my code clutter free.</p>
+</blockquote>
+<h3 id="post-entrycreate"><code>POST /entry/create</code></h3>
+<p>The <code>POST</code> aspect of our pairing is a little more interesting, requiring us to define error states, a service and wire up our dependencies. In order to obtain the user input, we'll also need to model bind the form values submitted and validate them to ensure they meet our criteria. And in the case of submission errors, we'll render the view from the <code>GET</code> action of the pair.</p>
+<pre><code class="language-fsharp">type NewEntryModel = 
+    { HtmlContent : string 
+      TextContent : string }
+          
+    static member Create html text = 
+        { HtmlContent = html
+          TextContent = text }
+
+    static member Empty =
+        NewEntryModel.Create String.Empty String.Empty
+
+module Create =     
+    type Error =
+        | InvalidInput of string list
+        | UnexpectedError
+
+    let service (createEntry : EntryProvider.Create) : ServiceHandler&lt;NewEntryModel, unit, Error&gt; =                
+        let validateInput (input : NewEntryModel) : Result&lt;NewEntry, Error&gt; =
+            let result = NewEntry.Create input.HtmlContent input.TextContent
+                
+            match result with
+            | Success newEntry -&gt; Ok newEntry
+            | Failure errors   -&gt; 
+                errors 
+                |&gt; ValidationErrors.toList
+                |&gt; InvalidInput
+                |&gt; Error
+
+        let commitEntry entry : Result&lt;unit, Error&gt; =
+            match createEntry entry with
+            | Error e -&gt; Error UnexpectedError
+            | Ok ()   -&gt; Ok ()
+            
+        fun input -&gt;
+            input
+            |&gt; validateInput
+            |&gt; Result.bind commitEntry
+
+    let handle : HttpHandler =
+        let handleError (input : NewEntryModel) (error : Error) = 
+            let errorMessages =                 
+                match error with 
+                | UnexpectedError     -&gt; [ &quot;Something went wrong&quot; ]
+                | InvalidInput errors -&gt; errors
+
+            New.view errorMessages input
+            |&gt; Response.ofHtml
+
+        let handleOk () : HttpHandler =
+            Response.redirect Urls.index false
+
+        let workflow (log : ILogger) (conn : IDbConnection) (input : NewEntryModel) =
+            service (EntryProvider.create log conn) input
+
+        let formMap (form : FormCollectionReader) : NewEntryModel =
+            { HtmlContent = form.GetString &quot;html_content&quot; &quot;&quot;
+              TextContent = form.GetString &quot;text_content&quot; &quot;&quot; }
+
+        Request.mapForm 
+            formMap 
+            (Service.run workflow handleOk handleError)
+</code></pre>
+<p>Following our pattern from above, the module tells a nice &quot;story&quot; about how it's little world works. We immediately see that we can expect one of two error states, invalid input or an unexpected error (kind of an &quot;error bucket&quot; I understand, but this is a demo app). Next we can see that there will be work potentially done, that requires a <code>NewEntryModel</code> to come in and will either produce no output, <code>unit</code> in the case of success, or an <code>Error</code> in the case of failure which we are forced to deal with thanks to F# completeness.</p>
+<p>The service itself defines a single dependency, on <code>EntryProvider.Create</code>, which has been partially applied in our composition root with the <code>ILogger</code> and <code>IDbConnection</code> it requires to perform IO. Two discrete steps are laid out in the service, validating the input &amp; transforming it into our valid domain model, <code>NewEntry</code>, and committing the entry to our database. Finally, we define a simple result-based pipeline to process our input.</p>
+<p>The form of the <code>HttpHandler</code> also tells a story that is easy to reason about. If we hide the definitions of the four functions, we can easily see that we have code to: handle errors, handle success, define our workflow and map our form. And truly there isn't much more to it than that.</p>
+<p>We kick things off using another function built into Falco called <code>Request.mapForm</code> which takes a mapping function (<code>FormCollectionReader -&gt; 'a</code>) as it's first parameter and an input-bound HttpHandler (<code>'a -&gt; HttpHandler</code>) as a second parameter. In our case, this handler is the function we defined in our composition root, which requires input of type <code>'a</code> for a service of type <code>ServiceHandler&lt;'a, 'output, 'error&gt;</code>. From here, if the service succeeds, <code>handleOk</code> response by redirecting us back to <code>/</code> and if the service fails we are reshown the view with error messages displayed.</p>
+<blockquote>
+<p><strong>Did you know?</strong> <br/>Similar to the <code>FormCollectionReader</code>, <a href="https://github.com/pimbrouwers/Falco">Falco</a> offers analogous readers for: <a href="https://github.com/pimbrouwers/Falco#query-binding">query strings</a>, headers and <a href="https://github.com/pimbrouwers/Falco#route-binding">route values</a>. All of which allow you to safely and reliably obtain values from these disparate sources in a uniform way.</p>
+</blockquote>
+<h2 id="in-conclusion">In conclusion</h2>
+<p>This post was a ton of fun to write, and yet so difficult to decide upon what content made it in and what didn't. Hopefully my decision making there was on point and this point helps paint a clear picture about developing idiomatic F# web apps using Falco.</p>
+<p>While I still have whatever is left of your attention, I'd like to take this opportunity to say thank you to all of you who've decided to follow and support the project, and a digital high-five for those who have contributed both literally and figuratively (you know who you are). To say this has been the most fun I've had in my career, would be a gigantic understatement. So thank you from the bottom of my heart for making it so special.</p>
+<p>If you've used Falco and love it (or hate it) I want to <a href="https://github.com/pimbrouwers/Falco/issues">hear</a> from you! I'm usually available on both Slack and <a href="https://twitter.com/pim_brouwers">Twitter</a> if you'd prefer to reach me there.</p>
 
 
 <!-- /body/footer -->
