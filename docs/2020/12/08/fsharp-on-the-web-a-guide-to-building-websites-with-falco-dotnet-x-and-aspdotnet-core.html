@@ -100,7 +100,7 @@ type Entry =
 <blockquote>
 <p>Notice the addition of <code>modified_date</code> here. We've purposefully omitted this from the F# model since we don't want the app to exude any control over this. But it will come in useful later for intraday sorting.</p>
 </blockquote>
-<p>Another thing we'll want to model is the state changes of our entry, which will take the form of either 1) creating a new entry, or 2) updating existing entry. I like this approach, despite it involving some duplicate code, becuase it uses the type system to make our intent clear and more importantly prevents us from filling meaningful fields with placeholder data to knowingly ignore.</p>
+<p>Another thing we'll want to model is the state changes of our entry, which will take the form of either 1) creating a new entry, or 2) updating existing entry. I like this approach, despite it involving some duplicate code, because it uses the type system to make our intent clear and more importantly prevents us from filling meaningful fields with placeholder data to knowingly ignore.</p>
 <pre><code class="language-fsharp">module FalcoJournal.Domain 
 
 open System
@@ -168,7 +168,7 @@ type UpdateEntry =
         &lt;*&gt; NewEntry.Create html text
 </code></pre>
 <p>Now, this adds a fair chunk of code to our previous slim domain. But I'll argue it's worthwhile it for it to live here on the basis that this code is highly cohesive with the type and may end up being used in more than one place.</p>
-<p><a href="https://github.com/pimbrouwers/Validus">Validus</a> comes with validators for most primitives types, which reside in the <code>Validators</code> module. They all share a similar function defition, excluding config params. Using some loose F# pseudocode:</p>
+<p><a href="https://github.com/pimbrouwers/Validus">Validus</a> comes with validators for most primitives types, which reside in the <code>Validators</code> module. They all share a similar function definition, excluding config params. Using some loose F# pseudo-code:</p>
 <pre><code class="language-fsharp">Validators.Int.greaterThan {minValue} {validation message}
 // int -&gt; ValidationMessage option -&gt; Validator 
 
@@ -178,7 +178,7 @@ ValidationMessage {fieldName}
 Validator {fieldName} {value}
 // string -&gt; 'a -&gt; ValidationResult&lt;'a&gt;
 </code></pre>
-<p>Validators can be composed using the <code>&lt;+&gt;</code> operator, or <code>Validator.compose</code>. This is demonstated above in the <code>let htmlValidator : Validator&lt;string&gt; = ...</code> which combines two string validators, including a custom message for the case of an empty <code>&lt;li&gt;&lt;/li&gt;</code>.</p>
+<p>Validators can be composed using the <code>&lt;+&gt;</code> operator, or <code>Validator.compose</code>. This is demonstrated above in the <code>let htmlValidator : Validator&lt;string&gt; = ...</code> which combines two string validators, including a custom message for the case of an empty <code>&lt;li&gt;&lt;/li&gt;</code>.</p>
 <h2 id="ui">UI</h2>
 <p>Next on our list are some of the UI elements that will be shared amongst our handlers, including things like buttons, form fields, the layout, top bar and error summary. We'll be using <a href="/2018/12/05/tachyons-the-best-library-you-re-not-using.html">tachyons</a> atomic CSS library since it's lovely for rapid UI development.</p>
 <blockquote>
@@ -189,14 +189,14 @@ Validator {fieldName} {value}
 <p>Most of the standard HTML tags &amp; attributes have been built into the markup module, which are pure functions composed into well-formed markup at run time. HTML tag functions are found in the <code>Elem</code> module, attributes in the <code>Attr</code> module. For string literal output there are several functions available in the <code>Text</code> module.</p>
 <pre><code class="language-fsharp">Elem.div [ Attr.class' &quot;bg-red&quot; ] [ Text.rawf &quot;Hello %s&quot; &quot;world&quot; ]
 </code></pre>
-<p>Rumor has it that the <a href="https://github.com/pimbrouwers/Falco">Falco</a> creator makes a dog sound everytime he uses <code>Text.rawf</code>.</p>
+<p>Rumor has it that the <a href="https://github.com/pimbrouwers/Falco">Falco</a> creator makes a dog sound every time he uses <code>Text.rawf</code>.</p>
 <blockquote>
 <p><strong>Note</strong>: I am the creator, and this is entirely true.</p>
 </blockquote>
 <h3 id="extensible-ui">Extensible UI</h3>
-<p>Idiomatic usage of the <code>Markup</code> module will involve building yourself a suite of project-specific functions for shared UI elements/sections/components. Doing this will darastically simplify the markup code in the feature layer(s).</p>
+<p>Idiomatic usage of the <code>Markup</code> module will involve building yourself a suite of project-specific functions for shared UI elements/sections/components. Doing this will drastically simplify the markup code in the feature layer(s).</p>
 <p>To demonstrate how this might look, the code below shows some of the common UI elements in our app.</p>
-<p>The important takeaway is how extensible having a view engine comprised of pure functions is. End-of-the-line elements, like the <code>pageTitle</code> below, darastically simplify the API for creating the specific chunk of markup. Wrapper elements, like the <code>topBar</code> below, show how elegantly we can compose complex view thanks to the recursive structure of the <code>XmlNode</code> type.</p>
+<p>The important takeaway is how extensible having a view engine comprised of pure functions is. End-of-the-line elements, like the <code>pageTitle</code> below, drastically simplify the API for creating the specific chunk of markup. Wrapper elements, like the <code>topBar</code> below, show how elegantly we can compose complex view thanks to the recursive structure of the <code>XmlNode</code> type.</p>
 <pre><code class="language-fsharp">module FalcoJournal.UI
 
 open Falco.Markup
@@ -347,7 +347,7 @@ let run
 
         respondWith ctx
 </code></pre>
-<p>In a nutshell, we define a function type to represent a &quot;service&quot; (i.e. the work to be done) which effectively says &quot;given an input you will either receive a successful result containing output, or an error&quot;. It's basic, but powerful. Next, we create an <code>HttpHandler</code> which will manifiest our dependencies, inject them into the provided service and based on the response type invoke either a <em>success</em> or <em>failure</em> handler.</p>
+<p>In a nutshell, we define a function type to represent a &quot;service&quot; (i.e. the work to be done) which effectively says &quot;given an input you will either receive a successful result containing output, or an error&quot;. It's basic, but powerful. Next, we create an <code>HttpHandler</code> which will manifest our dependencies, inject them into the provided service and based on the response type invoke either a <em>success</em> or <em>failure</em> handler.</p>
 <p>With this in place, our final handlers will look like this, instead of each containing the code above.</p>
 <pre><code class="language-fsharp">let handle : HttpHandler = 
     let handleError input error : HttpHandler = // ...
@@ -359,7 +359,7 @@ let run
     Service.run workflow handleOk handleError ()
 </code></pre>
 <h2 id="entry-feature">Entry Feature</h2>
-<p>Still with me? I realize it's been a lot of content to get here, but it's time for the raison d'être. Our app will be reponsible for 3 primary actions:</p>
+<p>Still with me? I realize it's been a lot of content to get here, but it's time for the raison d'être. Our app will be responsible for 3 primary actions:</p>
 <ol>
 <li><p>List all journal entries by date descending - <code>GET /</code></p>
 </li>
@@ -384,7 +384,7 @@ module Create =
 </code></pre>
 <p>For this post, we'll be covering #2, creating a new journal entry. But, feel free to checkout the <a href="https://github.com/pimbrouwers/FalcoJournal">full source</a> for the other two endpoints.</p>
 <h3 id="creating-a-new-journal-entry">Creating a new journal entry</h3>
-<p>When building server-side MPA's (multipage apps) most actions will come in pairs. A <code>GET</code> to load the initial UI and data, and a <code>POST</code> (or <code>PUT</code>) to handle submissions. Our case will be no exception. First we'll devise the <code>GET</code> handler and a view which will be shared between the pair. Then we'll move on to build the supporting <code>POST</code> action.</p>
+<p>When building server-side MPA's (multi-page apps) most actions will come in pairs. A <code>GET</code> to load the initial UI and data, and a <code>POST</code> (or <code>PUT</code>) to handle submissions. Our case will be no exception. First we'll devise the <code>GET</code> handler and a view which will be shared between the pair. Then we'll move on to build the supporting <code>POST</code> action.</p>
 <h4 id="get-entrycreate"><code>GET /entry/create</code></h4>
 <p>For this endpoint we know we need a view, and a means of rendering it. Luckily we've already got a working suite of UI utilities to pull from, and Falco comes with everything we need to render it.</p>
 <pre><code class="language-fsharp">open Falco.JournalEntry 
@@ -439,7 +439,7 @@ module New =
 </code></pre>
 <p>Some of this should already be familiar from our discussion in the <a href="#ui">UI</a> section, specifically the <code>Common.topBar</code> and <code>Common.errorSummary</code>. We've also introduced a few other UI elements, most notably our master layout (<code>Layouts.master</code>) and button elements (<code>Button.solidWhite</code>).</p>
 <p>You'll notice that our view function takes a <code>NewEntryModel</code> as it's final input parameter. This leads into one of the main benefits of using the <a href="https://github.com/pimbrouwers/Falco">Falco</a> markup module as an HTML view engine, strong typing. If the definition of <code>NewEntryModel</code> (seen below) changes in a breaking way, you better believe the compiler will tell you about it, and this is a great thing. Just think of all the bugs this can save!</p>
-<p>The actual handler in this case is pretty straight-forward. It simply invokves the view with an empty error list and empty model, and passes it into Falco's <code>Response.ofHtml</code> handler.</p>
+<p>The actual handler in this case is pretty straight-forward. It simply invokes the view with an empty error list and empty model, and passes it into the <a href="https://github.com/pimbrouwers/Falco">Falco</a> <code>Response.ofHtml</code> handler.</p>
 <blockquote>
 <p>Defining a static member for creating an empty record like this, <code>NewEntryModel.Empty</code>, is a pattern I like to keep my code clutter free.</p>
 </blockquote>
@@ -510,14 +510,14 @@ module Create =
 <p>Following our pattern from above, the module tells a nice &quot;story&quot; about how it's little world works. We immediately see that we can expect one of two error states, invalid input or an unexpected error (kind of an &quot;error bucket&quot; I understand, but this is a demo app). Next we can see that there will be work potentially done, that requires a <code>NewEntryModel</code> to come in and will either produce no output, <code>unit</code> in the case of success, or an <code>Error</code> in the case of failure which we are forced to deal with thanks to F# completeness.</p>
 <p>The service itself defines a single dependency, on <code>EntryProvider.Create</code>, which has been partially applied in our composition root with the <code>ILogger</code> and <code>IDbConnection</code> it requires to perform IO. Two discrete steps are laid out in the service, validating the input &amp; transforming it into our valid domain model, <code>NewEntry</code>, and committing the entry to our database. Finally, we define a simple result-based pipeline to process our input.</p>
 <p>The form of the <code>HttpHandler</code> also tells a story that is easy to reason about. If we hide the definitions of the four functions, we can easily see that we have code to: handle errors, handle success, define our workflow and map our form. And truly there isn't much more to it than that.</p>
-<p>We kick things off using another function built into Falco called <code>Request.mapForm</code> which takes a mapping function (<code>FormCollectionReader -&gt; 'a</code>) as it's first parameter and an input-bound HttpHandler (<code>'a -&gt; HttpHandler</code>) as a second parameter. In our case, this handler is the function we defined in our composition root, which requires input of type <code>'a</code> for a service of type <code>ServiceHandler&lt;'a, 'output, 'error&gt;</code>. From here, if the service succeeds, <code>handleOk</code> response by redirecting us back to <code>/</code> and if the service fails we are reshown the view with error messages displayed.</p>
+<p>We kick things off using another function built into Falco called <code>Request.mapForm</code> which takes a mapping function (<code>FormCollectionReader -&gt; 'a</code>) as it's first parameter and an input-bound HttpHandler (<code>'a -&gt; HttpHandler</code>) as a second parameter. In our case, this handler is the function we defined in our composition root, which requires input of type <code>'a</code> for a service of type <code>ServiceHandler&lt;'a, 'output, 'error&gt;</code>. From here, if the service succeeds, <code>handleOk</code> response by redirecting us back to <code>/</code> and if the service fails we are shown the view with error messages displayed.</p>
 <blockquote>
 <p><strong>Did you know?</strong> <br/>Similar to the <code>FormCollectionReader</code>, <a href="https://github.com/pimbrouwers/Falco">Falco</a> offers analogous readers for: <a href="https://github.com/pimbrouwers/Falco#query-binding">query strings</a>, headers and <a href="https://github.com/pimbrouwers/Falco#route-binding">route values</a>. All of which allow you to safely and reliably obtain values from these disparate sources in a uniform way.</p>
 </blockquote>
 <h2 id="in-conclusion">In conclusion</h2>
 <p>This post was a ton of fun to write, and yet so difficult to decide upon what content made it in and what didn't. Hopefully my decision making there was on point and this point helps paint a clear picture about developing idiomatic F# web apps using Falco.</p>
-<p>While I still have whatever is left of your attention, I'd like to take this opportunity to say thank you to all of you who've decided to follow and support the project, and a digital high-five for those who have contributed both literally and figuratively (you know who you are). To say this has been the most fun I've had in my career, would be a gigantic understatement. So thank you from the bottom of my heart for making it so special.</p>
-<p>If you've used Falco and love it (or hate it) I want to <a href="https://github.com/pimbrouwers/Falco/issues">hear</a> from you! I'm usually available on both Slack and <a href="https://twitter.com/pim_brouwers">Twitter</a> if you'd prefer to reach me there.</p>
+<p>While I still have whatever is left of your attention, I'd like to take this opportunity to say thank you to all of you who've decided to follow and support the project, and a digital high-five for those who have contributed both literally and figuratively (you know who you are). To say this has been the most fun I've had in my career would be a gigantic understatement. So thank you from the bottom of my heart for making it so special.</p>
+<p>If you've used Falco and love it (or hate it) I want to <a href="https://github.com/pimbrouwers/Falco/issues">hear</a> from you! I'm usually also available on both Slack and <a href="https://twitter.com/pim_brouwers">Twitter</a> if you'd prefer to reach me there.</p>
 
 
 <!-- /body/footer -->

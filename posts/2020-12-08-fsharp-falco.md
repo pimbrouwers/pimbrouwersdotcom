@@ -55,7 +55,7 @@ CREATE TABLE entry (
 
 > Notice the addition of `modified_date` here. We've purposefully omitted this from the F# model since we don't want the app to exude any control over this. But it will come in useful later for intraday sorting.
 
-Another thing we'll want to model is the state changes of our entry, which will take the form of either 1) creating a new entry, or 2) updating existing entry. I like this approach, despite it involving some duplicate code, becuase it uses the type system to make our intent clear and more importantly prevents us from filling meaningful fields with placeholder data to knowingly ignore.
+Another thing we'll want to model is the state changes of our entry, which will take the form of either 1) creating a new entry, or 2) updating existing entry. I like this approach, despite it involving some duplicate code, because it uses the type system to make our intent clear and more importantly prevents us from filling meaningful fields with placeholder data to knowingly ignore.
 
 ```fsharp
 module FalcoJournal.Domain 
@@ -131,7 +131,7 @@ type UpdateEntry =
 
 Now, this adds a fair chunk of code to our previous slim domain. But I'll argue it's worthwhile it for it to live here on the basis that this code is highly cohesive with the type and may end up being used in more than one place.
 
-[Validus][7] comes with validators for most primitives types, which reside in the `Validators` module. They all share a similar function defition, excluding config params. Using some loose F# pseudocode:
+[Validus][7] comes with validators for most primitives types, which reside in the `Validators` module. They all share a similar function definition, excluding config params. Using some loose F# pseudo-code:
 
 ```fsharp
 Validators.Int.greaterThan {minValue} {validation message}
@@ -144,7 +144,7 @@ Validator {fieldName} {value}
 // string -> 'a -> ValidationResult<'a>
 ```
 
-Validators can be composed using the `<+>` operator, or `Validator.compose`. This is demonstated above in the `let htmlValidator : Validator<string> = ...` which combines two string validators, including a custom message for the case of an empty `<li></li>`.
+Validators can be composed using the `<+>` operator, or `Validator.compose`. This is demonstrated above in the `let htmlValidator : Validator<string> = ...` which combines two string validators, including a custom message for the case of an empty `<li></li>`.
 
 ## UI
 
@@ -162,17 +162,17 @@ Most of the standard HTML tags & attributes have been built into the markup modu
 Elem.div [ Attr.class' "bg-red" ] [ Text.rawf "Hello %s" "world" ]
 ```
 
-Rumor has it that the [Falco][1] creator makes a dog sound everytime he uses `Text.rawf`.
+Rumor has it that the [Falco][1] creator makes a dog sound every time he uses `Text.rawf`.
 
 > **Note**: I am the creator, and this is entirely true.
 
 ### Extensible UI
 
-Idiomatic usage of the `Markup` module will involve building yourself a suite of project-specific functions for shared UI elements/sections/components. Doing this will darastically simplify the markup code in the feature layer(s).
+Idiomatic usage of the `Markup` module will involve building yourself a suite of project-specific functions for shared UI elements/sections/components. Doing this will drastically simplify the markup code in the feature layer(s).
 
 To demonstrate how this might look, the code below shows some of the common UI elements in our app.
 
-The important takeaway is how extensible having a view engine comprised of pure functions is. End-of-the-line elements, like the `pageTitle` below, darastically simplify the API for creating the specific chunk of markup. Wrapper elements, like the `topBar` below, show how elegantly we can compose complex view thanks to the recursive structure of the `XmlNode` type.
+The important takeaway is how extensible having a view engine comprised of pure functions is. End-of-the-line elements, like the `pageTitle` below, drastically simplify the API for creating the specific chunk of markup. Wrapper elements, like the `topBar` below, show how elegantly we can compose complex view thanks to the recursive structure of the `XmlNode` type.
 
 ```fsharp
 module FalcoJournal.UI
@@ -348,7 +348,7 @@ let run
         respondWith ctx
 ```
 
-In a nutshell, we define a function type to represent a "service" (i.e. the work to be done) which effectively says "given an input you will either receive a successful result containing output, or an error". It's basic, but powerful. Next, we create an `HttpHandler` which will manifiest our dependencies, inject them into the provided service and based on the response type invoke either a _success_ or _failure_ handler.
+In a nutshell, we define a function type to represent a "service" (i.e. the work to be done) which effectively says "given an input you will either receive a successful result containing output, or an error". It's basic, but powerful. Next, we create an `HttpHandler` which will manifest our dependencies, inject them into the provided service and based on the response type invoke either a _success_ or _failure_ handler.
 
 With this in place, our final handlers will look like this, instead of each containing the code above.
 
@@ -365,7 +365,7 @@ let handle : HttpHandler =
 
 ## Entry Feature
 
-Still with me? I realize it's been a lot of content to get here, but it's time for the raison d'être. Our app will be reponsible for 3 primary actions:
+Still with me? I realize it's been a lot of content to get here, but it's time for the raison d'être. Our app will be responsible for 3 primary actions:
 
 1. List all journal entries by date descending - `GET /`
 
@@ -394,7 +394,7 @@ For this post, we'll be covering #2, creating a new journal entry. But, feel fre
 
 ### Creating a new journal entry
 
-When building server-side MPA's (multipage apps) most actions will come in pairs. A `GET` to load the initial UI and data, and a `POST` (or `PUT`) to handle submissions. Our case will be no exception. First we'll devise the `GET` handler and a view which will be shared between the pair. Then we'll move on to build the supporting `POST` action.
+When building server-side MPA's (multi-page apps) most actions will come in pairs. A `GET` to load the initial UI and data, and a `POST` (or `PUT`) to handle submissions. Our case will be no exception. First we'll devise the `GET` handler and a view which will be shared between the pair. Then we'll move on to build the supporting `POST` action.
 
 #### `GET /entry/create`
 
@@ -456,7 +456,7 @@ Some of this should already be familiar from our discussion in the [UI](#ui) sec
 
 You'll notice that our view function takes a `NewEntryModel` as it's final input parameter. This leads into one of the main benefits of using the [Falco][1] markup module as an HTML view engine, strong typing. If the definition of `NewEntryModel` (seen below) changes in a breaking way, you better believe the compiler will tell you about it, and this is a great thing. Just think of all the bugs this can save!
 
-The actual handler in this case is pretty straight-forward. It simply invokves the view with an empty error list and empty model, and passes it into Falco's `Response.ofHtml` handler.
+The actual handler in this case is pretty straight-forward. It simply invokes the view with an empty error list and empty model, and passes it into the [Falco][1] `Response.ofHtml` handler.
 
 > Defining a static member for creating an empty record like this, `NewEntryModel.Empty`, is a pattern I like to keep my code clutter free.
 
@@ -534,7 +534,7 @@ The service itself defines a single dependency, on `EntryProvider.Create`, which
 
 The form of the `HttpHandler` also tells a story that is easy to reason about. If we hide the definitions of the four functions, we can easily see that we have code to: handle errors, handle success, define our workflow and map our form. And truly there isn't much more to it than that.
 
-We kick things off using another function built into Falco called `Request.mapForm` which takes a mapping function (`FormCollectionReader -> 'a`) as it's first parameter and an input-bound HttpHandler (`'a -> HttpHandler`) as a second parameter. In our case, this handler is the function we defined in our composition root, which requires input of type `'a` for a service of type `ServiceHandler<'a, 'output, 'error>`. From here, if the service succeeds, `handleOk` response by redirecting us back to `/` and if the service fails we are reshown the view with error messages displayed.
+We kick things off using another function built into Falco called `Request.mapForm` which takes a mapping function (`FormCollectionReader -> 'a`) as it's first parameter and an input-bound HttpHandler (`'a -> HttpHandler`) as a second parameter. In our case, this handler is the function we defined in our composition root, which requires input of type `'a` for a service of type `ServiceHandler<'a, 'output, 'error>`. From here, if the service succeeds, `handleOk` response by redirecting us back to `/` and if the service fails we are shown the view with error messages displayed.
 
 > **Did you know?** <br/>Similar to the `FormCollectionReader`, [Falco][1] offers analogous readers for: [query strings](https://github.com/pimbrouwers/Falco#query-binding), headers and [route values](https://github.com/pimbrouwers/Falco#route-binding). All of which allow you to safely and reliably obtain values from these disparate sources in a uniform way.
 
