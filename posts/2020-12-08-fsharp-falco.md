@@ -544,7 +544,7 @@ This post was a ton of fun to write, and yet so difficult to decide upon what co
 
 While I still have whatever is left of your attention, I'd like to take this opportunity to say thank you to all of you who've decided to follow and support the project, and a digital high-five for those who have contributed both literally and figuratively (you know who you are). To say this has been the most fun I've had in my career would be a gigantic understatement. So thank you from the bottom of my heart for making it so special.
 
-If you've used Falco and love it (or hate it) I want to [hear][10] from you! I'm usually also available on both Slack and [Twitter](https://twitter.com/pim_brouwers) if you'd prefer to reach me there.
+If you've used Falco and love it (or hate it) I want to [hear][10] from you! I'm usually also available on both Slack and [Twitter](https://twitter.com/falco_framework) if you'd prefer to reach me there.
 
 [1]: https://github.com/pimbrouwers/Falco
 [2]: https://github.com/fable-compiler/Fable
