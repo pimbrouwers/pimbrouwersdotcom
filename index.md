@@ -17,6 +17,6 @@ $postRoll
 
 [Sequel](//github.com/pimbrouwers/Sequel) - A fluent SQL interface that emulates writing actual SQL queries.
 
-[Spiffy](//github.com/pimbrouwers/Spiffy) - C# data access you'll love.
+[PsAdoNet](//github.com/pimbrouwers/PsAdoNet) - Composable tools for creating ADO.NET solutions with PowerShell.
 
-[dba-in-a-box](//github.com/pimbrouwers/dba-in-a-box) - One-click install to make life as a part-time SQL Server DBA easier.
+[Yamlr](//github.com/pimbrouwers/Yamlr) - An F# library for working with YAML in a type safe way.
