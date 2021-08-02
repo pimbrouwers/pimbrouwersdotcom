@@ -1,11 +1,12 @@
 [CmdletBinding()]
 param()
+
+#
+# Template engine
 function Invoke-Template {
 	param([ScriptBlock] $scriptBlock)
-
   function Render-Template {
-		param([string] $template)    
-
+		param([string] $template)        
 		Invoke-Expression "@`"`r`n$template`r`n`"@"
 	}
 	& $scriptBlock
@@ -37,7 +38,7 @@ Get-ChildItem .\posts -Filter *.md | Sort-Object -Descending | ForEach-Object {
 
   Invoke-Template {
     $markdown = Get-Content $fullName -Raw | ConvertFrom-Markdown    
-  
+        
     $title = $markdown | 
       Select-Object -ExpandProperty Tokens | 
       Select-Object -Property @{n="Content";e={$_.Inline.Content}} -First 1 -Skip 1 | 
@@ -85,6 +86,7 @@ Invoke-Template {
 
   $postHtml = $markdown | Select-Object -ExpandProperty Html  
 
+  Write-Debug $title
   Write-Debug $postHtml
 
   Render-Template $template 
@@ -94,32 +96,12 @@ Invoke-Template {
 
 #
 # Index
-$postLinkTemplate = '
-<p>
-    <small class="muted monospace">$postLinkDate</small>			
-    <br /><a href="$postLinkUrl">$postLinkTitle</a>
-</p>
-'
-
 Invoke-Template {
   $title = "Pim Brouwers"
-  $rawContent = Get-Content index.md -Raw
-  
-  $postRoll = ($postMeta | ForEach-Object {
-    $postLinkDate = $_.Date
-    $postLinkUrl = $_.Url
-    $postLinkTitle = $_.Title
-    
-    Write-Debug "Post Link: $postLinkTitle / $postLinkUrl / $postLinkDate"
-    
-    Render-Template $postLinkTemplate 
-  }) -join ""
-  
-  Write-Verbose $postRoll
-
-  $rawContentWithPostRoll = Render-Template $rawContent
-  
-  $markdown = $rawContentWithPostRoll | ConvertFrom-Markdown    
+  $rawContent = Get-Content index.md -Raw # load template
+ 
+  $rawContentWithPostRoll = Render-Template $rawContent # expand variables
+  $markdown = $rawContentWithPostRoll | ConvertFrom-Markdown 
 
   $postHtml = $markdown | Select-Object -ExpandProperty Html  
 

@@ -3,9 +3,14 @@
 <p class="big">Pim has a website and this is that website.</p>
 
 ***
-
-$postRoll
-
+$(foreach($post in $postMeta) {
+@"
+<p>
+    <small class="muted monospace">$($post.Date)</small>
+    <br /><a href="$($post.Url)">$($post.Title)</a>
+</p>
+"@
+})
 ***
 
 ## Projects
