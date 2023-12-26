@@ -14,14 +14,14 @@ $(foreach($post in $postMeta) {
 ***
 
 ## Projects
-[Falco](//github.com/pimbrouwers/Falco) - A functional toolkit for building brilliant ASP.NET Core applications using F#.
+[Falco](//github.com/pimbrouwers/Falco) - A toolkit for building fast and functional-first web applications using F#.
 
-[Donald](//github.com/pimbrouwers/Donald) - A succinct F# DSL for ADO.NET with pleasant ergonomics.
+[Donald](//github.com/pimbrouwers/Donald) - A lightweight, generic F# database abstraction.
 
-[Validus](//github.com/pimbrouwers/Validus) - A composable input validation library for F#.
+[Validus](//github.com/pimbrouwers/Validus) - An extensible F# validation library.
 
-[Sequel](//github.com/pimbrouwers/Sequel) - A fluent SQL interface that emulates writing actual SQL queries.
+[Falco.Markup](//github.com/pimbrouwers/Falco.Markup) - An F# DSL for generating markup, including HTML, SVG and XML.
 
-[PsAdoNet](//github.com/pimbrouwers/PsAdoNet) - Composable tools for creating ADO.NET solutions with PowerShell.
+[Jay](//github.com/pimbrouwers/Jay) - An F# JSON parser & serializer.
 
-[Yamlr](//github.com/pimbrouwers/Yamlr) - An F# library for working with YAML in a type safe way.
+[LunchPail](//github.com/pimbrouwers/LunchPail) - .NET Standard Unit of Work implementation for ADO.NET.
