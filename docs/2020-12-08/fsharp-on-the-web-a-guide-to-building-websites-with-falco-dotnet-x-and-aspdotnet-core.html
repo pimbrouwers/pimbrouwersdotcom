@@ -79,20 +79,20 @@ p > code { padding: 0 .25rem; }
 <p>Our bullet journal has a dead simple domain, since we effectively only have one entity to concern ourselves with, a journal entry. But this is great because it will let us focus most of our energy on the web side of things.</p>
 <p>To encapsulate our journal entry we'll need to know a few things, 1) the content, 2) when it was written and 3) a way to look it up in the future.</p>
 <p>In F# it will look something like:</p>
-<pre><code class="language-fsharp">module FalcoJournal.Domain 
+<pre><code class="language-fsharp">module FalcoJournal.Domain
 
 open System
 
-type Entry = 
+type Entry =
     { EntryId      : int
-      HtmlContent  : string 
+      HtmlContent  : string
       TextContent  : string
       EntryDate    : DateTime }
 </code></pre>
 <p>With the definition taking a similar shape in SQL:</p>
 <pre><code class="language-sql">CREATE TABLE entry (
     entry_id       INTEGER  NOT NULL  PRIMARY KEY
-  , html_content   TEXT     NOT NULL  
+  , html_content   TEXT     NOT NULL
   , text_content   TEXT     NOT NULL
   , entry_date     TEXT     NOT NULL
   , modified_date  TEXT     NOT NULL);
@@ -101,19 +101,19 @@ type Entry =
 <p>Notice the addition of <code>modified_date</code> here. We've purposefully omitted this from the F# model since we don't want the app to exude any control over this. But it will come in useful later for intraday sorting.</p>
 </blockquote>
 <p>Another thing we'll want to model is the state changes of our entry, which will take the form of either 1) creating a new entry, or 2) updating existing entry. I like this approach, despite it involving some duplicate code, because it uses the type system to make our intent clear and more importantly prevents us from filling meaningful fields with placeholder data to knowingly ignore.</p>
-<pre><code class="language-fsharp">module FalcoJournal.Domain 
+<pre><code class="language-fsharp">module FalcoJournal.Domain
 
 open System
 
 // ...
 
-type NewEntry = 
-    { HtmlContent : string 
+type NewEntry =
+    { HtmlContent : string
       TextContent : string }
 
 type UpdateEntry =
     { EntryId     : int
-      HtmlContent : string 
+      HtmlContent : string
       TextContent : string }
 </code></pre>
 <h3 id="input-validation">Input Validation</h3>
@@ -123,27 +123,27 @@ type UpdateEntry =
 <li>Ensure the user can't submit an empty entry.</li>
 <li>Ensure the user can't submit an entry with an invalid identifier.</li>
 </ul>
-<pre><code class="language-fsharp">module FalcoJournal.Domain 
+<pre><code class="language-fsharp">module FalcoJournal.Domain
 
 open System
 
 // ...
 
-type NewEntry = 
-    { HtmlContent : string 
+type NewEntry =
+    { HtmlContent : string
       TextContent : string }
 
     // equally valid to make this a module function
     static member Create html text : ValidationResult&lt;NewEntry&gt; =
-        let htmlValidator : Validator&lt;string&gt; = 
+        let htmlValidator : Validator&lt;string&gt; =
             // ensure the HTML is not empty, and check for empty &lt;li&gt;&lt;/li&gt;
             // which is the default value
             Validators.String.notEmpty None
             &lt;+&gt; Validators.String.notEquals &quot;&lt;li&gt;&lt;/li&gt;&quot; (Some (sprintf &quot;%s must not be empty&quot;))
 
-        let create html text = 
+        let create html text =
             { HtmlContent = html
-              TextContent = text }            
+              TextContent = text }
 
         create
         &lt;!&gt; htmlValidator &quot;HTML&quot; html
@@ -151,26 +151,26 @@ type NewEntry =
 
 type UpdateEntry =
     { EntryId     : int
-      HtmlContent : string 
+      HtmlContent : string
       TextContent : string }
 
     // equally valid to make this a module function
-    static member Create entryId html text : ValidationResult&lt;UpdateEntry&gt; =        
-        let create (entryId : int) (entry : NewEntry) = 
-            { EntryId = entryId 
-              HtmlContent = entry.HtmlContent 
+    static member Create entryId html text : ValidationResult&lt;UpdateEntry&gt; =
+        let create (entryId : int) (entry : NewEntry) =
+            { EntryId = entryId
+              HtmlContent = entry.HtmlContent
               TextContent = entry.TextContent }
 
         // repurpose the validation from NewEntry, since it's shape
         // resembles this and also check that the EntryId is gt 0
-        create 
-        &lt;!&gt; Validators.Int.greaterThan 0 (Some (sprintf &quot;Invalid %s&quot;)) &quot;Entry ID&quot; entryId 
+        create
+        &lt;!&gt; Validators.Int.greaterThan 0 (Some (sprintf &quot;Invalid %s&quot;)) &quot;Entry ID&quot; entryId
         &lt;*&gt; NewEntry.Create html text
 </code></pre>
 <p>Now, this adds a fair chunk of code to our previous slim domain. But I'll argue it's worthwhile it for it to live here on the basis that this code is highly cohesive with the type and may end up being used in more than one place.</p>
 <p><a href="https://github.com/pimbrouwers/Validus">Validus</a> comes with validators for most primitives types, which reside in the <code>Validators</code> module. They all share a similar function definition, excluding config params. Using some loose F# pseudo-code:</p>
 <pre><code class="language-fsharp">Validators.Int.greaterThan {minValue} {validation message}
-// int -&gt; ValidationMessage option -&gt; Validator 
+// int -&gt; ValidationMessage option -&gt; Validator
 
 ValidationMessage {fieldName}
 // string -&gt; string
@@ -201,15 +201,15 @@ Validator {fieldName} {value}
 
 open Falco.Markup
 
-module Common = 
+module Common =
     /// Display a list of errors as &lt;ul&gt;...&lt;/ul&gt;
     let errorSummary (errors : string list) =
         match errors.Length with
         | n when n &gt; 0 -&gt;
-            Elem.ul [ Attr.class' &quot;mt0 pa2 pl4 red bg-washed-red ba br1 b--red&quot; ] 
+            Elem.ul [ Attr.class' &quot;mt0 pa2 pl4 red bg-washed-red ba br1 b--red&quot; ]
                     (errors |&gt; List.map (fun e -&gt; Elem.li [] [ Text.raw e ]))
 
-        | _ -&gt; 
+        | _ -&gt;
             Elem.div [] []
 
     /// Page title as &lt;h1&gt;&lt;/h1&gt;
@@ -220,7 +220,7 @@ module Common =
     let topBar (actions : XmlNode list) =
         Elem.header [ Attr.class' &quot;pv4&quot; ] [
             Elem.nav [ Attr.class' &quot;flex items-center&quot; ] [
-                Elem.a [ Attr.class' &quot;f4 f3-l white-90 no-underline&quot; 
+                Elem.a [ Attr.class' &quot;f4 f3-l white-90 no-underline&quot;
                          Attr.href Urls.index ] [ Text.raw &quot;Falco Journal&quot; ]
                 Elem.div [ Attr.class' &quot;flex-grow-1 tr&quot; ] actions ] ]
 </code></pre>
@@ -240,13 +240,13 @@ open FalcoJournal.Domain
 
 // ...
 
-module private DbResult = 
+module private DbResult =
     /// Log DbResult, if error, and return
     let logError (log : ILogger) (dbResult : DbResult&lt;'a&gt;) : DbResult&lt;'a&gt; =
         match dbResult with
         | Ok _     -&gt; dbResult
         | Error ex -&gt;
-            log.LogError(ex.Error, sprintf &quot;DB ERROR: Failed to execute\n%s&quot; ex.Statement)        
+            log.LogError(ex.Error, sprintf &quot;DB ERROR: Failed to execute\n%s&quot; ex.Statement)
             dbResult
 
 // ...
@@ -261,7 +261,7 @@ open FalcoJournal.Domain
 
 // ...
 
-module EntryProvider =  
+module EntryProvider =
     type Get = int -&gt; DbResult&lt;Entry option&gt;
 
     let get (log : ILogger) (conn : IDbConnection) =
@@ -300,14 +300,14 @@ module EntryProvider =
 // ------------
 // Register services
 // ------------
-let configureServices (connectionFactory : DbConnectionFactory) (services : IServiceCollection) =    
+let configureServices (connectionFactory : DbConnectionFactory) (services : IServiceCollection) =
     services.AddSingleton&lt;DbConnectionFactory&gt;(connectionFactory)
     // ...
 
 // -----------
 // Configure Web host
 // -----------
-let configureWebHost (endpoints : HttpEndpoint list) (webHost : IWebHostBuilder) =        
+let configureWebHost (endpoints : HttpEndpoint list) (webHost : IWebHostBuilder) =
     // ...
     let connectionString = appConfiguration.GetConnectionString(&quot;Default&quot;)
     let connectionFactory () = new SQLiteConnection(connectionString, true) :&gt; IDbConnection
@@ -339,8 +339,8 @@ let run
         let connectionFactory = ctx.GetService&lt;DbConnectionFactory&gt;()
         use connection = connectionFactory ()
         let log = ctx.GetLogger &quot;FalcoJournal.Service&quot;
-                
-        let respondWith = 
+
+        let respondWith =
             match serviceHandler log connection input with
             | Ok output -&gt; handleOk output
             | Error error -&gt; handleError input error
@@ -349,13 +349,13 @@ let run
 </code></pre>
 <p>In a nutshell, we define a function type to represent a &quot;service&quot; (i.e. the work to be done) which effectively says &quot;given an input you will either receive a successful result containing output, or an error&quot;. It's basic, but powerful. Next, we create an <code>HttpHandler</code> which will manifest our dependencies, inject them into the provided service and based on the response type invoke either a <em>success</em> or <em>failure</em> handler.</p>
 <p>With this in place, our final handlers will look like this, instead of each containing the code above.</p>
-<pre><code class="language-fsharp">let handle : HttpHandler = 
+<pre><code class="language-fsharp">let handle : HttpHandler =
     let handleError input error : HttpHandler = // ...
-    
+
     let handleOk output  : HttpHandler = // ...
 
     let workflow log conn input : ServiceHandler&lt;unit, Output, Error&gt; = // ...
-    
+
     Service.run workflow handleOk handleError ()
 </code></pre>
 <h2 id="entry-feature">Entry Feature</h2>
@@ -371,7 +371,7 @@ let run
 <p>To do this, we're going to use a <strong>feature-based</strong> approach and encapsulate each action into it's own module with roughly the following shape:</p>
 <pre><code class="language-fsharp">module FalcoJournal.Entry
 
-module Create = 
+module Create =
     type Input = // ... (optional)
 
     type Error = // ...
@@ -387,31 +387,31 @@ module Create =
 <p>When building server-side MPA's (multi-page apps) most actions will come in pairs. A <code>GET</code> to load the initial UI and data, and a <code>POST</code> (or <code>PUT</code>) to handle submissions. Our case will be no exception. First we'll devise the <code>GET</code> handler and a view which will be shared between the pair. Then we'll move on to build the supporting <code>POST</code> action.</p>
 <h4 id="get-entrycreate"><code>GET /entry/create</code></h4>
 <p>For this endpoint we know we need a view, and a means of rendering it. Luckily we've already got a working suite of UI utilities to pull from, and Falco comes with everything we need to render it.</p>
-<pre><code class="language-fsharp">open Falco.JournalEntry 
+<pre><code class="language-fsharp">open Falco.JournalEntry
 
 // ...
 
 module New =
     let view (errors : string list) (newEntry : NewEntryModel) =
         let title = &quot;A place for your thoughts...&quot;
-        
+
         let actions = [
-            Forms.submit [ Attr.value &quot;Save Entry&quot;; Attr.form &quot;entry-editor&quot; ] 
+            Forms.submit [ Attr.value &quot;Save Entry&quot;; Attr.form &quot;entry-editor&quot; ]
             Buttons.solidWhite &quot;Cancel&quot; Urls.index ]
 
-        let editorContent = 
+        let editorContent =
             match newEntry.HtmlContent with
-            | str when StringUtils.strEmpty str -&gt; 
-                Elem.li [] [] 
+            | str when StringUtils.strEmpty str -&gt;
+                Elem.li [] []
 
             | _ -&gt;
                 Text.raw newEntry.HtmlContent
 
         Layouts.master title [
             Common.topBar actions
-            
+
             Common.errorSummary errors
-            
+
             Elem.form [ Attr.id &quot;entry-editor&quot;
                         Attr.method &quot;post&quot;
                         Attr.action Urls.entryCreate ] [
@@ -419,23 +419,23 @@ module New =
                 Elem.ul [ Attr.id &quot;bullet-editor&quot;
                         Attr.class' &quot;mh0 pl3 outline-0&quot;
                         Attr.create &quot;contenteditable&quot; &quot;true&quot; ] [
-                        
+
                     editorContent
                 ]
-                
-                Elem.input [ Attr.id &quot;bullet-editor-html&quot; 
-                            Attr.type' &quot;hidden&quot; 
-                            Attr.name &quot;html_content&quot; ]      
-                            
-                Elem.input [ Attr.id &quot;bullet-editor-text&quot; 
-                            Attr.type' &quot;hidden&quot; 
-                            Attr.name &quot;text_content&quot; ]      
-            ]                     
+
+                Elem.input [ Attr.id &quot;bullet-editor-html&quot;
+                            Attr.type' &quot;hidden&quot;
+                            Attr.name &quot;html_content&quot; ]
+
+                Elem.input [ Attr.id &quot;bullet-editor-text&quot;
+                            Attr.type' &quot;hidden&quot;
+                            Attr.name &quot;text_content&quot; ]
+            ]
         ]
 
     let handle : HttpHandler =
         view [] NewEntryModel.Empty
-        |&gt; Response.ofHtml    
+        |&gt; Response.ofHtml
 </code></pre>
 <p>Some of this should already be familiar from our discussion in the <a href="#ui">UI</a> section, specifically the <code>Common.topBar</code> and <code>Common.errorSummary</code>. We've also introduced a few other UI elements, most notably our master layout (<code>Layouts.master</code>) and button elements (<code>Button.solidWhite</code>).</p>
 <p>You'll notice that our view function takes a <code>NewEntryModel</code> as it's final input parameter. This leads into one of the main benefits of using the <a href="https://github.com/pimbrouwers/Falco">Falco</a> markup module as an HTML view engine, strong typing. If the definition of <code>NewEntryModel</code> (seen below) changes in a breaking way, you better believe the compiler will tell you about it, and this is a great thing. Just think of all the bugs this can save!</p>
@@ -445,30 +445,30 @@ module New =
 </blockquote>
 <h3 id="post-entrycreate"><code>POST /entry/create</code></h3>
 <p>The <code>POST</code> aspect of our pairing is a little more interesting, requiring us to define error states, a service and wire up our dependencies. In order to obtain the user input, we'll also need to model bind the form values submitted and validate them to ensure they meet our criteria. And in the case of submission errors, we'll render the view from the <code>GET</code> action of the pair.</p>
-<pre><code class="language-fsharp">type NewEntryModel = 
-    { HtmlContent : string 
+<pre><code class="language-fsharp">type NewEntryModel =
+    { HtmlContent : string
       TextContent : string }
-          
-    static member Create html text = 
+
+    static member Create html text =
         { HtmlContent = html
           TextContent = text }
 
     static member Empty =
         NewEntryModel.Create String.Empty String.Empty
 
-module Create =     
+module Create =
     type Error =
         | InvalidInput of string list
         | UnexpectedError
 
-    let service (createEntry : EntryProvider.Create) : ServiceHandler&lt;NewEntryModel, unit, Error&gt; =                
+    let service (createEntry : EntryProvider.Create) : ServiceHandler&lt;NewEntryModel, unit, Error&gt; =
         let validateInput (input : NewEntryModel) : Result&lt;NewEntry, Error&gt; =
             let result = NewEntry.Create input.HtmlContent input.TextContent
-                
+
             match result with
             | Success newEntry -&gt; Ok newEntry
-            | Failure errors   -&gt; 
-                errors 
+            | Failure errors   -&gt;
+                errors
                 |&gt; ValidationErrors.toList
                 |&gt; InvalidInput
                 |&gt; Error
@@ -477,16 +477,16 @@ module Create =
             match createEntry entry with
             | Error e -&gt; Error UnexpectedError
             | Ok ()   -&gt; Ok ()
-            
+
         fun input -&gt;
             input
             |&gt; validateInput
             |&gt; Result.bind commitEntry
 
     let handle : HttpHandler =
-        let handleError (input : NewEntryModel) (error : Error) = 
-            let errorMessages =                 
-                match error with 
+        let handleError (input : NewEntryModel) (error : Error) =
+            let errorMessages =
+                match error with
                 | UnexpectedError     -&gt; [ &quot;Something went wrong&quot; ]
                 | InvalidInput errors -&gt; errors
 
@@ -503,8 +503,8 @@ module Create =
             { HtmlContent = form.GetString &quot;html_content&quot; &quot;&quot;
               TextContent = form.GetString &quot;text_content&quot; &quot;&quot; }
 
-        Request.mapForm 
-            formMap 
+        Request.mapForm
+            formMap
             (Service.run workflow handleOk handleError)
 </code></pre>
 <p>Following our pattern from above, the module tells a nice &quot;story&quot; about how it's little world works. We immediately see that we can expect one of two error states, invalid input or an unexpected error (kind of an &quot;error bucket&quot; I understand, but this is a demo app). Next we can see that there will be work potentially done, that requires a <code>NewEntryModel</code> to come in and will either produce no output, <code>unit</code> in the case of success, or an <code>Error</code> in the case of failure which we are forced to deal with thanks to F# completeness.</p>
@@ -516,7 +516,6 @@ module Create =
 </blockquote>
 <h2 id="in-conclusion">In conclusion</h2>
 <p>This post was a ton of fun to write, and yet so difficult to decide upon what content made it in and what didn't. Hopefully my decision making there was on point and this point helps paint a clear picture about developing idiomatic F# web apps using Falco.</p>
-<p>While I still have whatever is left of your attention, I'd like to take this opportunity to say thank you to all of you who've decided to follow and support the project, and a digital high-five for those who have contributed both literally and figuratively (you know who you are). To say this has been the most fun I've had in my career would be a gigantic understatement. So thank you from the bottom of my heart for making it so special.</p>
 <p>If you've used Falco and love it (or hate it) I want to <a href="https://github.com/pimbrouwers/Falco/issues">hear</a> from you! I'm usually also available on both Slack and <a href="https://twitter.com/falco_framework">Twitter</a> if you'd prefer to reach me there.</p>
 
 
