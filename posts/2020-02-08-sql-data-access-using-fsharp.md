@@ -24,43 +24,43 @@ open System.Data.SqlClient
 
 /// Create a new IDbCommand from SQL statement & parameters,
 /// and execute against connection
-let newCommand 
-    (sql : string) 
-    (parameters : seq<string * obj>) 
-    (conn : IDbConnection) =        
+let newCommand
+    (sql : string)
+    (parameters : seq<string * obj>)
+    (conn : IDbConnection) =
     let createParameter (cmd: SqlCommand) (name : string, value : obj) =
         let p = cmd.CreateParameter()
         p.ParameterName <- name
         p.Value <- value
         p
 
-    let addParameter (cmd: SqlCommand) (p : SqlParameter) = 
+    let addParameter (cmd: SqlCommand) (p : SqlParameter) =
         cmd.Parameters.Add(p) |> ignore
 
     let cmd = new SqlCommand(connection = conn, cmdText = sql)
 
-    cmd.CommandType <- CommandType.Text        
-    parameters 
+    cmd.CommandType <- CommandType.Text
+    parameters
     |> Seq.iter (fun p -> p |> createParameter cmd |> addParameter cmd)
-    cmd 
+    cmd
 
 /// Execute an IDbCommand that has no results
-let exec 
-    (sql : string) 
-    (parameters : seq<string * obj>) 
-    (conn : IDbConnection) =        
+let exec
+    (sql : string)
+    (parameters : seq<string * obj>)
+    (conn : IDbConnection) =
     let cmd = newCommand sql param conn
     cmd.ExecuteNonQuery()
 
 /// Execute an IDbCommand and map results during enumeration
-let query 
-    (sql : string) 
-    (parameters : seq<string * obj>) 
-    (map : IDataReader -> 'a) 
-    (conn : IDbConnection) =        
+let query
+    (sql : string)
+    (parameters : seq<string * obj>)
+    (map : IDataReader -> 'a)
+    (conn : IDbConnection) =
     let cmd = newCommand sql param conn
     use rd = cmd.ExecuteReader()
-    [ while rd.Read() do yield map rd ]</pre>
+    [ while rd.Read() do yield map rd ]
 ```
 
 > Notice that there is mutation happening here (anywhere you see `<-`). But that's okay because we've tucked it away and sand boxed it with a function wrapper.

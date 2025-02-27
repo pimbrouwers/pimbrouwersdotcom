@@ -1,114 +1,126 @@
 [CmdletBinding()]
 param()
 
-#
-# Template engine
 function Invoke-Template {
-	param([ScriptBlock] $scriptBlock)
-  function Render-Template {
-		param([string] $template)        
-		Invoke-Expression "@`"`r`n$template`r`n`"@"
-	}
-	& $scriptBlock
+    param([ScriptBlock] $scriptBlock)
+    function Out-Template {
+        param([string] $template)
+        Invoke-Expression "@`"`r`n$template`r`n`"@"
+    }
+    & $scriptBlock
 }
 
-$outputDir = "docs"
-$template = Get-Content -Path .\template.html -Raw | Out-String
+#
+# Prepare output directory
+$docsDir = "docs"
+$indexFile = Join-Path -Path $docsDir -ChildPath "index.html"
+$404File = Join-Path -Path $docsDir -ChildPath "404.html"
 
-if(Test-Path -Path $outputDir) {
-  Remove-Item $outputDir -Recurse -Force 
+if (!(Test-Path -Path $docsDir)) {
+    New-Item -ItemType Directory $docsDir | Write-Verbose
 }
 
-New-Item -ItemType Directory $outputDir | Write-Verbose
+# remove posts
+Get-ChildItem -Path $docsDir  -Recurse | Where-Object { $_.Name -match "^[\d]{4}-[\d]{2}-[\d]{2}$" } | Remove-Item -Recurse -Force
+Remove-Item -Path $indexFile -Force
+Remove-Item -Path $404File -Force
 
-#
-# Copy cruft
-Copy-Item -Path CNAME, prism.css, prism.js, favicon.ico -Destination $outputDir -Recurse
+# if(Test-Path -Path $docsDir) {
+#   Remove-Item $docsDir -Recurse -Force
+# }
 
-#
-# Copy images
-New-Item -Path $outputDir\img -ItemType Directory | Write-Verbose
-Copy-Item -Path img\* -Destination $outputDir\img -Recurse
+# New-Item -ItemType Directory $docsDir | Write-Verbose
+
+# #
+# # Copy cruft
+# Copy-Item -Path CNAME, prism.css, prism.js, favicon.ico -Destination $docsDir -Recurse
+
+# #
+# # Copy images
+# New-Item -Path $docsDir\img -ItemType Directory | Write-Verbose
+# Copy-Item -Path img\* -Destination $docsDir\img -Recurse
 
 #
 # Build posts
-$postMeta = 
+$template = Get-Content -Path .\template.html -Raw | Out-String
+
+$postMeta =
 Get-ChildItem .\posts -Filter *.md | Sort-Object -Descending | ForEach-Object {
-  $fullName = $_.FullName
+    $fullName = $_.FullName
 
-  Invoke-Template {
-    $markdown = Get-Content $fullName -Raw | ConvertFrom-Markdown    
-        
-    $title = $markdown | 
-      Select-Object -ExpandProperty Tokens | 
-      Select-Object -Property @{n="Content";e={$_.Inline.Content}} -First 1 -Skip 1 | 
-      Select-Object -ExpandProperty Content 
-  
-    $date = $markdown |
-      Select-Object -ExpandProperty Tokens | 
-      Select-Object -Property @{n="PostDate";e={$_.Inline.Content}} -First 1 -Skip 4 | 
-      Select-Object -ExpandProperty PostDate
-  
-    $postHtml = $markdown | Select-Object -ExpandProperty Html  
-  
-    Write-Debug $postHtml
+    Invoke-Template {
+        $markdown = Get-Content $fullName -Raw | ConvertFrom-Markdown
 
-    $postNameUrlSafe = [regex]::Replace([regex]::Replace($title.ToString().ToLower().Replace("#", "sharp").Replace(".net", "dotnet"), "[^a-z]", "-"), "\-{2,}", "-")
-    $postDateDir = [DateTime]::ParseExact($date, "MMMM d, yyyy", $null).ToString("yyyy/MM/dd")
-    $postOutputDir = Join-Path -Path $outputDir -ChildPath $postDateDir 
+        $title = $markdown |
+        Select-Object -ExpandProperty Tokens |
+        Select-Object -Property @{n = "Content"; e = { $_.Inline.Content } } -First 1 -Skip 1 |
+        Select-Object -ExpandProperty Content
 
-    New-Item -ItemType Directory -Path $postOutputDir -Force
-    | Write-Verbose
+        $date = $markdown |
+        Select-Object -ExpandProperty Tokens |
+        Select-Object -Property @{n = "PostDate"; e = { $_.Inline.Content } } -First 1 -Skip 4 |
+        Select-Object -ExpandProperty PostDate
 
-    $postFilename = "$($postNameUrlSafe).html"
+        $postHtml = $markdown | Select-Object -ExpandProperty Html
 
-    Render-Template $template 
-    | Out-File -Path (Join-Path -Path $postOutputDir -ChildPath $postFilename)
-    | Write-Verbose
+        Write-Debug $postHtml
 
-    $meta = [pscustomobject]@{
-      Title = $title
-      Date  = $date
-      Url   = (Join-Path $postDateDir -ChildPath $postFilename)
+        $postNameUrlSafe = [regex]::Replace([regex]::Replace($title.ToString().ToLower().Replace("#", "sharp").Replace(".net", "dotnet"), "[^a-z]", "-"), "\-{2,}", "-")
+        $postDateDir = [DateTime]::ParseExact($date, "MMMM d, yyyy", $null).ToString("yyyy/MM/dd")
+        $postOutputDir = Join-Path -Path $docsDir -ChildPath $postDateDir
+
+        New-Item -ItemType Directory -Path $postOutputDir -Force
+        | Write-Verbose
+
+        $postFilename = "$($postNameUrlSafe).html"
+
+        Out-Template $template
+        | Out-File -Path (Join-Path -Path $postOutputDir -ChildPath $postFilename)
+        | Write-Verbose
+
+        $meta = [pscustomobject]@{
+            Title = $title
+            Date  = $date
+            Url   = (Join-Path $postDateDir -ChildPath $postFilename)
+        }
+
+        Write-Output $meta
     }
-
-    Write-Output $meta
-  }
-} 
+}
 
 Write-Verbose ($postMeta | Out-String)
 
 #
 # 404
-Invoke-Template {  
-  $title = "404 - Not Found | Pim Brouwers"
-  $markdown = Get-Content 404.md -Raw | ConvertFrom-Markdown    
+Invoke-Template {
+    $title = "404 - Not Found | Pim Brouwers"
+    $markdown = Get-Content 404.md -Raw | ConvertFrom-Markdown
 
-  $postHtml = $markdown | Select-Object -ExpandProperty Html  
+    $postHtml = $markdown | Select-Object -ExpandProperty Html
 
-  Write-Debug $title
-  Write-Debug $postHtml
+    Write-Debug $title
+    Write-Debug $postHtml
 
-  Render-Template $template 
-  | Out-File -Path (Join-Path -Path $outputDir -ChildPath "404.html")
+    Out-Template $template
+  | Out-File -Path $404File
   | Write-Verbose
 }
 
 #
 # Index
 Invoke-Template {
-  $title = "Pim Brouwers"
-  $rawContent = Get-Content index.md -Raw # load template
- 
-  $rawContentWithPostRoll = Render-Template $rawContent # expand variables
-  $markdown = $rawContentWithPostRoll | ConvertFrom-Markdown 
+    $title = "Pim Brouwers"
+    $rawContent = Get-Content index.md -Raw # load template
 
-  $postHtml = $markdown | Select-Object -ExpandProperty Html  
+    $rawContentWithPostRoll = Out-Template $rawContent # expand variables
+    $markdown = $rawContentWithPostRoll | ConvertFrom-Markdown
 
-  Write-Debug $title
-  Write-Debug $postHtml
+    $postHtml = $markdown | Select-Object -ExpandProperty Html
 
-  Render-Template $template 
-  | Out-File -Path (Join-Path -Path $outputDir -ChildPath "index.html")
+    Write-Debug $title
+    Write-Debug $postHtml
+
+    Out-Template $template
+  | Out-File -Path $indexFile
   | Write-Verbose
 }
