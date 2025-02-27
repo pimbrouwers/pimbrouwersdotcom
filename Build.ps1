@@ -25,21 +25,6 @@ Get-ChildItem -Path $docsDir  -Recurse | Where-Object { $_.Name -match "^[\d]{4}
 Remove-Item -Path $indexFile -Force
 Remove-Item -Path $404File -Force
 
-# if(Test-Path -Path $docsDir) {
-#   Remove-Item $docsDir -Recurse -Force
-# }
-
-# New-Item -ItemType Directory $docsDir | Write-Verbose
-
-# #
-# # Copy cruft
-# Copy-Item -Path CNAME, prism.css, prism.js, favicon.ico -Destination $docsDir -Recurse
-
-# #
-# # Copy images
-# New-Item -Path $docsDir\img -ItemType Directory | Write-Verbose
-# Copy-Item -Path img\* -Destination $docsDir\img -Recurse
-
 #
 # Build posts
 $template = Get-Content -Path .\template.html -Raw | Out-String
