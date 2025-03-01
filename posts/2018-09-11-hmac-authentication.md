@@ -2,13 +2,13 @@
 
 # HMAC Authentication: Better protection for your API
 
-Building web software today is all about API's (application programming interface's). Whether your implementing your own microservice architecture or integrating with other platforms, there's just no way around it. And this is a good thing.
+For the non-technical, an API is essentially a layer in front of your information that is designed to be computer-readable. If it could talk it would say, "this is the data I have to offer and this is what it looks like". Establishing a data contract of sorts.
 
 * * *
 
 <small class="muted monospace">SEPTEMBER 11, 2018</small>
 
-For the non-technical, an API is essentially a layer in front of your information that is designed to be computer-readable. If it could talk it would say, "this is the data I have to offer and this is what it looks like". Establishing a data contract of sorts. It is meant to be generic enough that the consumers (other software applications) don't need to know anything beyond the data format to consume it (this is not unlike HTTP itself, more on that another time). This means that the underlying API code could theoretically change at anytime without disrupting service, so long as the data contract is still met.
+API's are meant to be generic enough that the consumers, other software applications, don't need to know anything beyond the data format to consume it (not unlike HTTP itself, more on that another time). This means that the underlying API code could theoretically change at anytime without disrupting service, so long as the data contract is still met.
 
 Still with me?
 
@@ -19,7 +19,7 @@ The bulk of API providers, not all, will typically resort to what's known as Bas
 ```csharp
 // NOTE: this is pseudo-code
 string usernameAndPassword = "username:password";
-string digest = base64(usernameAndPassword); 
+string digest = base64(usernameAndPassword);
 // result: dXNlcm5hbWU6cGFzc3dvcmQ=
 ```
 
@@ -38,20 +38,20 @@ This is where HMAC Authentication (hash based message authentication) comes into
 Opposed to sending the raw password on each request, a secure hash of the password and some other information is generated and sent in the HTTP Header. Often times this "other information" is the URI (universal resource indicator) and HTTP Verb (GET, POST etc.) of the request.
 
 ```csharp
-// NOTE: this is pseudo-code   
+// NOTE: this is pseudo-code
 string username = "username";
 string password = "password";
 
 var crytographer = hmac("SHA256", password);
 string secureHash = crytographer.Hash("GET+/username/securedata");
 
-// password is used as the key to generate 
+// password is used as the key to generate
 // the hash from the message:
 // GET+/username/securedata
 
 string hmacHeader = base64(secureHash);
 
-// base64 is used again to encode 
+// base64 is used again to encode
 // the binary data into simple text
 ```
 

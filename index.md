@@ -14,14 +14,17 @@ $(foreach($post in $postMeta) {
 ***
 
 ## Projects
+
 [Falco](//github.com/pimbrouwers/Falco) - A toolkit for building fast and functional-first web applications using F#.
+
+[Falco.Htmx](//github.com/pimbrouwers/Falco.Htmx) - Falco + htmx = ❤️.
+
+[Falco.Markup](//github.com/pimbrouwers/Falco.Markup) - An F# DSL for efficient markup generation.
+
+[Danom](//github.com/pimbrouwers/Danom) - Structures for durable programming patterns in C#.
 
 [Donald](//github.com/pimbrouwers/Donald) - A lightweight, generic F# database abstraction.
 
-[Validus](//github.com/pimbrouwers/Validus) - An extensible F# validation library.
-
-[Falco.Markup](//github.com/pimbrouwers/Falco.Markup) - An F# DSL for generating markup, including HTML, SVG and XML.
-
-[Jay](//github.com/pimbrouwers/Jay) - An F# JSON parser & serializer.
-
 [LunchPail](//github.com/pimbrouwers/LunchPail) - .NET Standard Unit of Work implementation for ADO.NET.
+
+[Validus](//github.com/pimbrouwers/Validus) - An extensible F# validation library.

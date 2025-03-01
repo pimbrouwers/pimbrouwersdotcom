@@ -67,4 +67,35 @@ let query
 
 So in about 40 lines of code we've created ourselves a small, well-understood and self documenting solution that can help us fully achieve the goal of interacting with a database. Pretty sweet!
 
-If you find this approach helpful, feel free to checkout my open-source project [Donald](https://github.com/pimbrouwers/Donald), a well-tested F# interface for ADO.NET which is vendor agnostic.
+Now let's see how we can use this module to interact with a database. We'll use a simple example of a table called `author` with columns `author_id`, `full_name`.
+
+```fsharp
+module MyApp
+
+open System.Data
+open System.Data.SqlClient
+
+type Author = { Id : int; FullName : string }
+
+let connStr = "{connection string goes here}"
+let conn = new SqlConnection(connStr)
+conn.Open()
+
+let fullName = " Jim Bob-Magoo"
+Db.exec
+    "INSERT INTO author (full_name) VALUES (@name)"
+    [ "name", fullName ]
+    conn
+
+let authors =
+    Db.query
+        "SELECT * FROM author"
+        []
+        (fun rd ->
+            { Id = rd.GetInt32(0)
+              FullName = rd.GetString(1) })
+
+conn.Close()
+```
+
+If you find this approach helpful, feel free to checkout my open-source project [Donald](https://github.com/pimbrouwers/Donald), a well-tested F# interface for ADO.NET which is vendor agnostic built in this style.

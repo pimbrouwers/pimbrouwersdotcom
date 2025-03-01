@@ -87,7 +87,35 @@ let query
 <p>Notice that there is mutation happening here (anywhere you see <code>&lt;-</code>). But that's okay because we've tucked it away and sand boxed it with a function wrapper.</p>
 </blockquote>
 <p>So in about 40 lines of code we've created ourselves a small, well-understood and self documenting solution that can help us fully achieve the goal of interacting with a database. Pretty sweet!</p>
-<p>If you find this approach helpful, feel free to checkout my open-source project <a href="https://github.com/pimbrouwers/Donald">Donald</a>, a well-tested F# interface for ADO.NET which is vendor agnostic.</p>
+<p>Now let's see how we can use this module to interact with a database. We'll use a simple example of a table called <code>author</code> with columns <code>author_id</code>, <code>full_name</code>.</p>
+<pre><code class="language-fsharp">module MyApp
+
+open System.Data
+open System.Data.SqlClient
+
+type Author = { Id : int; FullName : string }
+
+let connStr = &quot;{connection string goes here}&quot;
+let conn = new SqlConnection(connStr)
+conn.Open()
+
+let fullName = &quot; Jim Bob-Magoo&quot;
+Db.exec
+    &quot;INSERT INTO author (full_name) VALUES (@name)&quot;
+    [ &quot;name&quot;, fullName ]
+    conn
+
+let authors =
+    Db.query
+        &quot;SELECT * FROM author&quot;
+        []
+        (fun rd -&gt;
+            { Id = rd.GetInt32(0)
+              FullName = rd.GetString(1) })
+
+conn.Close()
+</code></pre>
+<p>If you find this approach helpful, feel free to checkout my open-source project <a href="https://github.com/pimbrouwers/Donald">Donald</a>, a well-tested F# interface for ADO.NET which is vendor agnostic built in this style.</p>
 
 
 <!-- /body/footer -->
@@ -96,7 +124,7 @@ let query
   <p>
     <div>Pim Brouwers</div>
     <div>
-      <a href="//github.com/pimbrouwers" target="_blank">GitHub</a>
+      <a href="https://github.com/pimbrouwers" target="_blank">GitHub</a>
     </div>
   </p>
 </footer>
